@@ -1,0 +1,23 @@
+FASTA File Splitter
+
+Version 1.0.5137; January 24, 2014
+	- Added property SplitFastaFileInfo
+
+Version 1.0.5136; January 23, 2014
+	- Refactored splitting code into a DLL
+
+Version 1.0.5058; November 6, 2013
+	- Changed naming scheme for split files
+		- For example, using /N:10 when processing ProteinList.fasta will give files ProteinList_10x_01.fasta through ProteinList_10x_10.fasta
+
+Version 1.0.4828; March 21, 2013
+	- Fixed bug choosing target output file
+
+Version 1.0.4792; February 13, 2013
+	- Updated to .NET 4
+
+Version 1.0.3913; September 18, 2010
+	- New versions of ProteinFileReader.dll and clsProcessFilesBaseClass.vb
+
+Version 1.0.3743; April 1, 2010
+	- Initial release
