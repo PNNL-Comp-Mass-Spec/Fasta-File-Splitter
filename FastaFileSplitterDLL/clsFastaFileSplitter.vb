@@ -7,11 +7,13 @@ Option Strict On
 '
 ' Started April 1, 2010
 
+Imports System.IO
+
 Public Class clsFastaFileSplitter
     Inherits clsProcessFilesBaseClass
 
     Public Sub New()
-		MyBase.mFileDate = "January 23, 2014"
+		MyBase.mFileDate = "April 25, 2014"
         InitializeLocalVariables()
     End Sub
 
@@ -111,8 +113,7 @@ Public Class clsFastaFileSplitter
         Dim strFormatCode As String
 
         Dim intZeroCount As Integer
-        Dim intIndex As Integer
-        Dim intFileNum As Integer
+		Dim intFileNum As Integer
 
         Dim strOutputfilePath As String
         Dim blnSuccess As Boolean
@@ -160,28 +161,28 @@ Public Class clsFastaFileSplitter
 
         Dim strErrorMessage As String
 
-        If MyBase.ErrorCode = clsProcessFilesBaseClass.eProcessFilesErrorCodes.LocalizedError Or _
-           MyBase.ErrorCode = clsProcessFilesBaseClass.eProcessFilesErrorCodes.NoError Then
-            Select Case mLocalErrorCode
-                Case eFastaFileSplitterErrorCodes.NoError
-                    strErrorMessage = ""
+		If MyBase.ErrorCode = eProcessFilesErrorCodes.LocalizedError Or _
+		   MyBase.ErrorCode = eProcessFilesErrorCodes.NoError Then
+			Select Case mLocalErrorCode
+				Case eFastaFileSplitterErrorCodes.NoError
+					strErrorMessage = ""
 
-                Case eFastaFileSplitterErrorCodes.ErrorReadingInputFile
-                    strErrorMessage = "Error reading input file"
+				Case eFastaFileSplitterErrorCodes.ErrorReadingInputFile
+					strErrorMessage = "Error reading input file"
 
-                Case eFastaFileSplitterErrorCodes.ErrorWritingOutputFile
-                    strErrorMessage = "Error writing to the output file"
+				Case eFastaFileSplitterErrorCodes.ErrorWritingOutputFile
+					strErrorMessage = "Error writing to the output file"
 
-                Case eFastaFileSplitterErrorCodes.UnspecifiedError
-                    strErrorMessage = "Unspecified localized error"
-        
-                Case Else
-                    ' This shouldn't happen
-                    strErrorMessage = "Unknown error state"
-            End Select
-        Else
-            strErrorMessage = MyBase.GetBaseClassErrorMessage()
-        End If
+				Case eFastaFileSplitterErrorCodes.UnspecifiedError
+					strErrorMessage = "Unspecified localized error"
+
+				Case Else
+					' This shouldn't happen
+					strErrorMessage = "Unknown error state"
+			End Select
+		Else
+			strErrorMessage = MyBase.GetBaseClassErrorMessage()
+		End If
 
         Return strErrorMessage
 
@@ -202,12 +203,13 @@ Public Class clsFastaFileSplitter
 		' 2) Populate an array with the file numbers that have residue counts less than the average
 		' 3) Randomly choose one of those files
 
-		Static objRand As New System.Random
+		' Note: intentially using a seed here
+		Static objRand As New Random(314159)
 
 		Dim lngSum As Int64
 		Dim dblAverageCount As Double
 
-		Dim lstCandidates As Generic.List(Of Integer)
+		Dim lstCandidates As List(Of Integer)
 
 		Dim intIndex As Integer
 		Dim intRandomIndex As Integer
@@ -233,7 +235,7 @@ Public Class clsFastaFileSplitter
 
 		' Populate intCandidates with the file numbers that have residue counts less than dblAverageCount
 
-		lstCandidates = New Generic.List(Of Integer)
+		lstCandidates = New List(Of Integer)
 
 		For intIndex = 0 To intSplitCount - 1
 
@@ -281,11 +283,11 @@ Public Class clsFastaFileSplitter
     Public Shared Function IsFastaFile(ByVal strFilePath As String) As Boolean
         ' Examines the file's extension and true if it ends in .fasta
 
-        If System.IO.Path.GetExtension(strFilePath).ToLower = ".fasta" Then
-            Return True
-        Else
-            Return False
-        End If
+		If Path.GetExtension(strFilePath).ToLower = ".fasta" Then
+			Return True
+		Else
+			Return False
+		End If
 
     End Function
 
