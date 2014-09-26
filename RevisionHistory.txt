@@ -1,5 +1,9 @@
 FASTA File Splitter
 
+Version 1.0.5381; September 25, 2014
+	- Updated clsParseCommandLine that checks for CR/LF characters in the command line
+	- New ProteinFileReader.dll
+
 Verison 1.0.5228; April 25, 2014
 	- Now using a seed when instantiating the random number generator
 

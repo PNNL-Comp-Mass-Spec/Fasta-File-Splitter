@@ -27,7 +27,7 @@ Imports FastaFileSplitterDLL
 
 Module modMain
 
-	Public Const PROGRAM_DATE As String = "January 23, 2014"
+	Public Const PROGRAM_DATE As String = "September 25, 2014"
 
     Private mInputFilePath As String
 
