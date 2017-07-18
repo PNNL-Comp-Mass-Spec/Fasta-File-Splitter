@@ -105,7 +105,7 @@ Public Class clsFastaOutputFile
                 ' Write out the protein header and description line
                 mOutputFile.WriteLine(mProteinLineStartChar & strProteinName & mProteinLineAccessionEndChar & strDescription)
 
-                ' Now right out the residues, storing mResiduesPerLine residues per line
+                ' Now write out the residues, storing mResiduesPerLine residues per line
                 intStartIndex = 0
                 Do While intStartIndex < strSequence.Length
                     intCharCount = mResiduesPerLine
