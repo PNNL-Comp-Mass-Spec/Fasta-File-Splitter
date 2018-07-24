@@ -73,7 +73,7 @@ Public Class clsFastaOutputFile
         End If
         mOutputFilePath = strOutputFilePath
 
-        mOutputFile = New System.IO.StreamWriter(New System.IO.FileStream(strOutputFilePath, IO.FileMode.Create, IO.FileAccess.Write, IO.FileShare.Write))
+        mOutputFile = New StreamWriter(New FileStream(strOutputFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
         mOutputFileIsOpen = True
 
         mProteinLineStartChar = chProteinLineStartChar

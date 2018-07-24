@@ -1,5 +1,9 @@
 FASTA File Splitter
 
+Version 1.0.6778; July 23, 2018
+	- Use classes in PRISM.dll
+	- Updated ProteinFileReader.dll
+
 Version 1.0.5381; September 25, 2014
 	- Updated clsParseCommandLine that checks for CR/LF characters in the command line
 	- New ProteinFileReader.dll
