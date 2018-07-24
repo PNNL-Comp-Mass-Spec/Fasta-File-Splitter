@@ -13,7 +13,7 @@
     <AssemblyName>FastaFileSplitterDLL</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,9 +46,6 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ProteinFileReader">
-      <HintPath>..\lib\ProteinFileReader.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -70,8 +67,14 @@
     <Compile Include="clsFastaOutputFile.vb" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="My Project\" />
+    <PackageReference Include="PRISM-Library">
+      <Version>2.4.92</Version>
+    </PackageReference>
+    <PackageReference Include="ProteinFileReader">
+      <Version>1.3.1</Version>
+    </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
