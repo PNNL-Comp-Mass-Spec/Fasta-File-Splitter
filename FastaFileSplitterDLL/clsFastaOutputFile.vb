@@ -1,5 +1,7 @@
 ﻿Option Strict On
 
+Imports System.IO
+
 Public Class clsFastaOutputFile
 
 #Region "Constants and Enums"
@@ -12,7 +14,7 @@ Public Class clsFastaOutputFile
 
     Protected mOutputFileIsOpen As Boolean
     Protected mOutputFilePath As String
-    Protected mOutputFile As System.IO.StreamWriter
+    Protected mOutputFile As StreamWriter
 
     Protected mProteinLineStartChar As String
     Protected mProteinLineAccessionEndChar As String
@@ -20,7 +22,7 @@ Public Class clsFastaOutputFile
     Protected mResiduesPerLine As Integer
 
     Protected mTotalProteinsInFile As Integer
-    Protected mTotalResiduesInFile As System.Int64
+    Protected mTotalResiduesInFile As Int64
 
 #End Region
 
@@ -42,9 +44,9 @@ Public Class clsFastaOutputFile
         Get
             Return mResiduesPerLine
         End Get
-        Set(ByVal value As Integer)
-            If value < 1 Then value = 1
-            mResiduesPerLine = value
+        Set
+            If Value < 1 Then Value = 1
+            mResiduesPerLine = Value
         End Set
     End Property
 
@@ -61,13 +63,13 @@ Public Class clsFastaOutputFile
     End Property
 #End Region
 
-    Public Sub New(ByVal strOutputFilePath As String)
+    Public Sub New(strOutputFilePath As String)
         Me.New(strOutputFilePath, DEFAULT_PROTEIN_LINE_START_CHAR, DEFAULT_PROTEIN_LINE_ACCESSION_END_CHAR)
     End Sub
 
-    Public Sub New(ByVal strOutputFilePath As String, ByVal chProteinLineStartChar As Char, ByVal chProteinLineAccessionEndChar As Char)
+    Public Sub New(strOutputFilePath As String, chProteinLineStartChar As Char, chProteinLineAccessionEndChar As Char)
         If strOutputFilePath Is Nothing OrElse strOutputFilePath.Length = 0 Then
-            Throw New System.Exception("OutputFilePath is empty; cannot instantiate class")
+            Throw New Exception("OutputFilePath is empty; cannot instantiate class")
         End If
         mOutputFilePath = strOutputFilePath
 
@@ -94,7 +96,7 @@ Public Class clsFastaOutputFile
         End Try
     End Sub
 
-    Public Sub StoreProtein(ByVal strProteinName As String, ByRef strDescription As String, ByRef strSequence As String)
+    Public Sub StoreProtein(strProteinName As String, ByRef strDescription As String, ByRef strSequence As String)
 
         Dim intStartIndex As Integer
         Dim intCharCount As Integer
@@ -121,7 +123,7 @@ Public Class clsFastaOutputFile
 
             Catch ex As Exception
                 Console.WriteLine("Error in StoreProtein: " & ex.Message)
-                Throw ex
+                Throw
             End Try
 
         End If

@@ -37,18 +37,18 @@ Public Class clsFastaFileSplitter
 
 #End Region
 
-#Region "Structures"   
+#Region "Structures"
     Public Structure udtProteinInfoType
         Public Name As String
         Public Description As String
         Public Sequence As String
-	End Structure
+    End Structure
 
-	Public Structure udtFastaFileInfoType
-		Public FilePath As String
-		Public NumProteins As Integer
-		Public NumResidues As Int64
-	End Structure
+    Public Structure udtFastaFileInfoType
+        Public FilePath As String
+        Public NumProteins As Integer
+        Public NumResidues As Int64
+    End Structure
 
 #End Region
 
@@ -59,7 +59,7 @@ Public Class clsFastaFileSplitter
     Private mInputFileLinesRead As Integer
     Private mInputFileLineSkipCount As Integer
 
-	Private mSplitFastaFileInfo As List(Of udtFastaFileInfoType)
+    Private mSplitFastaFileInfo As List(Of udtFastaFileInfoType)
 
     Public FastaFileOptions As FastaFileOptionsClass
 
@@ -96,27 +96,27 @@ Public Class clsFastaFileSplitter
         Get
             Return mSplitCount
         End Get
-        Set(ByVal value As Integer)
-            If value < 0 Then value = 0
-            mSplitCount = value
+        Set
+            If Value < 0 Then Value = 0
+            mSplitCount = Value
         End Set
     End Property
 
-	Public ReadOnly Property SplitFastaFileInfo() As List(Of udtFastaFileInfoType)
-		Get
-			Return mSplitFastaFileInfo
-		End Get
-	End Property
+    Public ReadOnly Property SplitFastaFileInfo() As List(Of udtFastaFileInfoType)
+        Get
+            Return mSplitFastaFileInfo
+        End Get
+    End Property
 
 #End Region
 
-    Protected Function CreateOutputFiles(ByVal intSplitCount As Integer, _
-                                         ByVal strOutputFilePathBase As String, _
+    Protected Function CreateOutputFiles(intSplitCount As Integer,
+                                         strOutputFilePathBase As String,
                                          ByRef objOutputFiles() As clsFastaOutputFile) As Boolean
         Dim strFormatCode As String
 
         Dim intZeroCount As Integer
-		Dim intFileNum As Integer
+        Dim intFileNum As Integer
 
         Dim strOutputfilePath As String
         Dim blnSuccess As Boolean
@@ -135,7 +135,7 @@ Public Class clsFastaFileSplitter
 
             ' Create each of the output files
             For intFileNum = 1 To intSplitCount
-				strOutputfilePath = strOutputFilePathBase & "_" & intSplitCount & "x_" & intFileNum.ToString(strFormatCode) & ".fasta"
+                strOutputfilePath = strOutputFilePathBase & "_" & intSplitCount & "x_" & intFileNum.ToString(strFormatCode) & ".fasta"
                 objOutputFiles(intFileNum - 1) = New clsFastaOutputFile(strOutputfilePath)
             Next
 
@@ -150,10 +150,10 @@ Public Class clsFastaFileSplitter
 
     End Function
 
-    Public Overrides Function GetDefaultExtensionsToParse() As String()
-        Dim strExtensionsToParse(0) As String
-
-        strExtensionsToParse(0) = ".fasta"
+    Public Overrides Function GetDefaultExtensionsToParse() As IList(Of String)
+        Dim strExtensionsToParse = New List(Of String) From {
+            ".fasta"
+        }
 
         Return strExtensionsToParse
 
@@ -164,28 +164,28 @@ Public Class clsFastaFileSplitter
 
         Dim strErrorMessage As String
 
-		If MyBase.ErrorCode = eProcessFilesErrorCodes.LocalizedError Or _
-		   MyBase.ErrorCode = eProcessFilesErrorCodes.NoError Then
-			Select Case mLocalErrorCode
-				Case eFastaFileSplitterErrorCodes.NoError
-					strErrorMessage = ""
+        If MyBase.ErrorCode = eProcessFilesErrorCodes.LocalizedError Or
+           MyBase.ErrorCode = eProcessFilesErrorCodes.NoError Then
+            Select Case mLocalErrorCode
+                Case eFastaFileSplitterErrorCodes.NoError
+                    strErrorMessage = ""
 
-				Case eFastaFileSplitterErrorCodes.ErrorReadingInputFile
-					strErrorMessage = "Error reading input file"
+                Case eFastaFileSplitterErrorCodes.ErrorReadingInputFile
+                    strErrorMessage = "Error reading input file"
 
-				Case eFastaFileSplitterErrorCodes.ErrorWritingOutputFile
-					strErrorMessage = "Error writing to the output file"
+                Case eFastaFileSplitterErrorCodes.ErrorWritingOutputFile
+                    strErrorMessage = "Error writing to the output file"
 
-				Case eFastaFileSplitterErrorCodes.UnspecifiedError
-					strErrorMessage = "Unspecified localized error"
+                Case eFastaFileSplitterErrorCodes.UnspecifiedError
+                    strErrorMessage = "Unspecified localized error"
 
-				Case Else
-					' This shouldn't happen
-					strErrorMessage = "Unknown error state"
-			End Select
-		Else
-			strErrorMessage = MyBase.GetBaseClassErrorMessage()
-		End If
+                Case Else
+                    ' This shouldn't happen
+                    strErrorMessage = "Unknown error state"
+            End Select
+        Else
+            strErrorMessage = MyBase.GetBaseClassErrorMessage()
+        End If
 
         Return strErrorMessage
 
@@ -199,74 +199,74 @@ Public Class clsFastaFileSplitter
     ''' <param name="objOutputFiles">Array of clsFastaOutputFile objects</param>
     ''' <returns>Randomly selected target file number (ranging from 1 to intSplitCount)</returns>
     ''' <remarks></remarks>
-	Protected Function GetTargetFileNum(ByVal intSplitCount As Integer, ByRef objOutputFiles() As clsFastaOutputFile) As Integer
+    Protected Function GetTargetFileNum(intSplitCount As Integer, ByRef objOutputFiles() As clsFastaOutputFile) As Integer
 
-		' The strategy:
-		' 1) Compute the average residue count already stored to the files
-		' 2) Populate an array with the file numbers that have residue counts less than the average
-		' 3) Randomly choose one of those files
+        ' The strategy:
+        ' 1) Compute the average residue count already stored to the files
+        ' 2) Populate an array with the file numbers that have residue counts less than the average
+        ' 3) Randomly choose one of those files
 
-		' Note: intentially using a seed here
-		Static objRand As New Random(314159)
+        ' Note: intentially using a seed here
+        Static objRand As New Random(314159)
 
-		Dim lngSum As Int64
-		Dim dblAverageCount As Double
+        Dim lngSum As Int64
+        Dim dblAverageCount As Double
 
-		Dim lstCandidates As List(Of Integer)
+        Dim lstCandidates As List(Of Integer)
 
-		Dim intIndex As Integer
-		Dim intRandomIndex As Integer
+        Dim intIndex As Integer
+        Dim intRandomIndex As Integer
 
-		If intSplitCount <= 1 Then
-			' Nothing to do; just return 1
-			Return 1
-		End If
+        If intSplitCount <= 1 Then
+            ' Nothing to do; just return 1
+            Return 1
+        End If
 
-		' Compute the average number of residues stored in each file
-		lngSum = 0
-		For intIndex = 0 To intSplitCount - 1
-			lngSum += objOutputFiles(intIndex).TotalResiduesInFile
-		Next
+        ' Compute the average number of residues stored in each file
+        lngSum = 0
+        For intIndex = 0 To intSplitCount - 1
+            lngSum += objOutputFiles(intIndex).TotalResiduesInFile
+        Next
 
-		If lngSum = 0 Then
-			' We haven't stored any proteins yet
-			' Just return a random number between 1 and intSplitCount
-			Return objRand.Next(1, intSplitCount)
-		End If
+        If lngSum = 0 Then
+            ' We haven't stored any proteins yet
+            ' Just return a random number between 1 and intSplitCount
+            Return objRand.Next(1, intSplitCount)
+        End If
 
-		dblAverageCount = lngSum / intSplitCount
+        dblAverageCount = lngSum / intSplitCount
 
-		' Populate intCandidates with the file numbers that have residue counts less than dblAverageCount
+        ' Populate intCandidates with the file numbers that have residue counts less than dblAverageCount
 
-		lstCandidates = New List(Of Integer)
+        lstCandidates = New List(Of Integer)
 
-		For intIndex = 0 To intSplitCount - 1
+        For intIndex = 0 To intSplitCount - 1
 
-			If objOutputFiles(intIndex).TotalResiduesInFile < (dblAverageCount) Then
-				lstCandidates.Add(intIndex + 1)
-			End If
+            If objOutputFiles(intIndex).TotalResiduesInFile < (dblAverageCount) Then
+                lstCandidates.Add(intIndex + 1)
+            End If
 
-		Next
+        Next
 
-		If lstCandidates.Count > 0 Then
-			' Now randomly choose an entry in intCandidates
-			' Note that objRand.Next(x,y) returns an integer in the range x <= i < y
-			' In other words, the range of random numbers returned is x through y-1
-			'
-			' Thus, we pass intCandidateCount to the upper bound of objRand.Next() to get a
-			' range of values from 0 to intCandidateCount-1
+        If lstCandidates.Count > 0 Then
+            ' Now randomly choose an entry in intCandidates
+            ' Note that objRand.Next(x,y) returns an integer in the range x <= i < y
+            ' In other words, the range of random numbers returned is x through y-1
+            '
+            ' Thus, we pass intCandidateCount to the upper bound of objRand.Next() to get a
+            ' range of values from 0 to intCandidateCount-1
 
-			intRandomIndex = objRand.Next(0, lstCandidates.Count)
+            intRandomIndex = objRand.Next(0, lstCandidates.Count)
 
-			' Return the file number at index intRandomIndex in intCandidates
-			Return lstCandidates.Item(intRandomIndex)
-		Else
-			' Pick a file at random
-			Return objRand.Next(1, intSplitCount)
-		End If
+            ' Return the file number at index intRandomIndex in intCandidates
+            Return lstCandidates.Item(intRandomIndex)
+        Else
+            ' Pick a file at random
+            Return objRand.Next(1, intSplitCount)
+        End If
 
 
-	End Function
+    End Function
 
     Private Sub InitializeLocalVariables()
         mLocalErrorCode = eFastaFileSplitterErrorCodes.NoError
@@ -277,24 +277,24 @@ Public Class clsFastaFileSplitter
         mInputFileLinesRead = 0
         mInputFileLineSkipCount = 0
 
-		mSplitFastaFileInfo = New List(Of udtFastaFileInfoType)
+        mSplitFastaFileInfo = New List(Of udtFastaFileInfoType)
 
         FastaFileOptions = New FastaFileOptionsClass
 
     End Sub
 
-    Public Shared Function IsFastaFile(ByVal strFilePath As String) As Boolean
+    Public Shared Function IsFastaFile(strFilePath As String) As Boolean
         ' Examines the file's extension and true if it ends in .fasta
 
-		If Path.GetExtension(strFilePath).ToLower = ".fasta" Then
-			Return True
-		Else
-			Return False
-		End If
+        If Path.GetExtension(strFilePath).ToLower = ".fasta" Then
+            Return True
+        Else
+            Return False
+        End If
 
     End Function
 
-    Public Function LoadParameterFileSettings(ByVal strParameterFilePath As String) As Boolean
+    Public Function LoadParameterFileSettings(strParameterFilePath As String) As Boolean
 
         Dim objSettingsFile As New XmlSettingsFileAccessor
 
@@ -305,11 +305,11 @@ Public Class clsFastaFileSplitter
                 Return True
             End If
 
-            If Not System.IO.File.Exists(strParameterFilePath) Then
+            If Not File.Exists(strParameterFilePath) Then
                 ' See if strParameterFilePath points to a file in the same directory as the application
-                strParameterFilePath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), System.IO.Path.GetFileName(strParameterFilePath))
-                If Not System.IO.File.Exists(strParameterFilePath) Then
-                    MyBase.SetBaseClassErrorCode(clsProcessFilesBaseClass.eProcessFilesErrorCodes.ParameterFileNotFound)
+                strParameterFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), Path.GetFileName(strParameterFilePath))
+                If Not File.Exists(strParameterFilePath) Then
+                    MyBase.SetBaseClassErrorCode(eProcessFilesErrorCodes.ParameterFileNotFound)
                     Return False
                 End If
             End If
@@ -317,7 +317,7 @@ Public Class clsFastaFileSplitter
             If objSettingsFile.LoadSettings(strParameterFilePath) Then
                 If Not objSettingsFile.SectionPresent(XML_SECTION_OPTIONS) Then
                     ShowErrorMessage("The node '<section name=""" & XML_SECTION_OPTIONS & """> was not found in the parameter file: " & strParameterFilePath)
-                    MyBase.SetBaseClassErrorCode(clsProcessFilesBaseClass.eProcessFilesErrorCodes.InvalidParameterFile)
+                    MyBase.SetBaseClassErrorCode(eProcessFilesErrorCodes.InvalidParameterFile)
                     Return False
                 Else
 
@@ -334,10 +334,10 @@ Public Class clsFastaFileSplitter
 
     End Function
 
-    Protected Function OpenInputFile(ByVal strInputFilePath As String, _
-                                     ByVal strOutputFolderPath As String, _
-                                     ByVal strOutputFileNameBaseBaseOverride As String, _
-                                     ByRef objFastaFileReader As ProteinFileReader.FastaFileReader, _
+    Protected Function OpenInputFile(strInputFilePath As String,
+                                     strOutputFolderPath As String,
+                                     strOutputFileNameBaseBaseOverride As String,
+                                     ByRef objFastaFileReader As ProteinFileReader.FastaFileReader,
                                      ByRef strOutputFilePathBase As String) As Boolean
 
         Dim blnSuccess As Boolean
@@ -346,12 +346,12 @@ Public Class clsFastaFileSplitter
         Try
 
             If strInputFilePath Is Nothing OrElse strInputFilePath.Length = 0 Then
-                SetBaseClassErrorCode(clsProcessFilesBaseClass.eProcessFilesErrorCodes.InvalidInputFilePath)
+                SetBaseClassErrorCode(eProcessFilesErrorCodes.InvalidInputFilePath)
             Else
 
                 ' Verify that the input file exists
-                If Not System.IO.File.Exists(strInputFilePath) Then
-                    MyBase.SetBaseClassErrorCode(clsProcessFilesBaseClass.eProcessFilesErrorCodes.InvalidInputFilePath)
+                If Not File.Exists(strInputFilePath) Then
+                    MyBase.SetBaseClassErrorCode(eProcessFilesErrorCodes.InvalidInputFilePath)
                     blnSuccess = False
                     Exit Try
                 End If
@@ -366,31 +366,31 @@ Public Class clsFastaFileSplitter
                 ' Define the output file name
                 strOutputFileNameBase = String.Empty
                 If Not strOutputFileNameBaseBaseOverride Is Nothing AndAlso strOutputFileNameBaseBaseOverride.Length > 0 Then
-                    If System.IO.Path.HasExtension(strOutputFileNameBaseBaseOverride) Then
+                    If Path.HasExtension(strOutputFileNameBaseBaseOverride) Then
                         strOutputFileNameBase = String.Copy(strOutputFileNameBaseBaseOverride)
 
                         ' Remove the extension
-                        strOutputFileNameBase = System.IO.Path.GetFileNameWithoutExtension(strOutputFileNameBase)
+                        strOutputFileNameBase = Path.GetFileNameWithoutExtension(strOutputFileNameBase)
                     Else
                         strOutputFileNameBase = String.Copy(strOutputFileNameBaseBaseOverride)
                     End If
                 End If
 
                 If strOutputFileNameBase.Length = 0 Then
-                    ' Output file name is not defined; auto-define it                   
-                    strOutputFileNameBase = System.IO.Path.GetFileNameWithoutExtension(strInputFilePath)
+                    ' Output file name is not defined; auto-define it
+                    strOutputFileNameBase = Path.GetFileNameWithoutExtension(strInputFilePath)
                 End If
 
                 If strOutputFolderPath Is Nothing OrElse strOutputFolderPath.Length = 0 Then
                     ' This code likely won't be reached since CleanupFilePaths() should have already initialized strOutputFolderPath
-                    Dim fiInputFile As System.IO.FileInfo
-                    fiInputFile = New System.IO.FileInfo(strInputFilePath)
+                    Dim fiInputFile As FileInfo
+                    fiInputFile = New FileInfo(strInputFilePath)
 
                     strOutputFolderPath = fiInputFile.Directory.FullName
                 End If
 
                 ' Define the full path to output file base name
-                strOutputFilePathBase = System.IO.Path.Combine(strOutputFolderPath, strOutputFileNameBase)
+                strOutputFilePathBase = Path.Combine(strOutputFolderPath, strOutputFileNameBase)
 
                 blnSuccess = True
             End If
@@ -405,7 +405,7 @@ Public Class clsFastaFileSplitter
 
     End Function
 
-    Public Function SplitFastaFile(ByVal strInputFastaFilePath As String, ByVal strOutputFolderPath As String, ByVal intSplitCount As Integer) As Boolean
+    Public Function SplitFastaFile(strInputFastaFilePath As String, strOutputFolderPath As String, intSplitCount As Integer) As Boolean
         Return SplitFastaFile(strInputFastaFilePath, strOutputFolderPath, String.Empty, intSplitCount)
     End Function
 
@@ -418,115 +418,122 @@ Public Class clsFastaFileSplitter
     ''' <param name="strOutputFileNameBaseOverride"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function SplitFastaFile(ByVal strInputFastaFilePath As String, _
-                                   ByVal strOutputFolderPath As String, _
-                                   ByVal strOutputFileNameBaseOverride As String, _
-                                   ByVal intSplitCount As Integer) As Boolean
+    Public Function SplitFastaFile(strInputFastaFilePath As String,
+                                   strOutputFolderPath As String,
+                                   strOutputFileNameBaseOverride As String,
+                                   intSplitCount As Integer) As Boolean
 
         ' If strOutputFileNameBaseOverride is defined, then uses that name for the protein output filename rather than auto-defining the name
 
-		Dim objFastaFileReader As ProteinFileReader.FastaFileReader = Nothing
+        Dim objFastaFileReader As ProteinFileReader.FastaFileReader = Nothing
 
         ' The following is a zero-based array that tracks the output file handles, along with the number of residues written to each file
-		Dim objOutputFiles() As clsFastaOutputFile = Nothing
+        Dim objOutputFiles() As clsFastaOutputFile = Nothing
         Dim strOutputFilePathBase As String = String.Empty
 
-        Dim blnSuccess As Boolean = False
+        Dim blnSuccess = False
         Dim blnInputProteinFound As Boolean
 
         Dim intOutputFileIndex As Integer
 
-		Try
-			mSplitFastaFileInfo.Clear()
+        Try
+            mSplitFastaFileInfo.Clear()
 
-			' Open the input file and define the output file path
-			blnSuccess = OpenInputFile(strInputFastaFilePath, _
-			   strOutputFolderPath, _
-			   strOutputFileNameBaseOverride, _
-			   objFastaFileReader, _
-			   strOutputFilePathBase)
+            ' Open the input file and define the output file path
+            blnSuccess = OpenInputFile(strInputFastaFilePath,
+               strOutputFolderPath,
+               strOutputFileNameBaseOverride,
+               objFastaFileReader,
+               strOutputFilePathBase)
 
-			' Abort processing if we couldn't successfully open the input file
-			If Not blnSuccess Then Return False
+            ' Abort processing if we couldn't successfully open the input file
+            If Not blnSuccess Then Return False
 
-			If intSplitCount < 1 Then intSplitCount = 1
+            If intSplitCount < 1 Then intSplitCount = 1
 
-			' Create the output files
-			blnSuccess = CreateOutputFiles(intSplitCount, strOutputFilePathBase, objOutputFiles)
-			If Not blnSuccess Then Return False
+            ' Create the output files
+            blnSuccess = CreateOutputFiles(intSplitCount, strOutputFilePathBase, objOutputFiles)
+            If Not blnSuccess Then Return False
 
-			' Attempt to open the input file
-			If Not objFastaFileReader.OpenFile(strInputFastaFilePath) Then
-				SetLocalErrorCode(eFastaFileSplitterErrorCodes.ErrorReadingInputFile)
-				Return False
-			End If
+            ' Attempt to open the input file
+            If Not objFastaFileReader.OpenFile(strInputFastaFilePath) Then
+                SetLocalErrorCode(eFastaFileSplitterErrorCodes.ErrorReadingInputFile)
+                Return False
+            End If
 
-			UpdateProgress("Splitting fasta file: " & System.IO.Path.GetFileName(strInputFastaFilePath), 0)
+            UpdateProgress("Splitting fasta file: " & Path.GetFileName(strInputFastaFilePath), 0)
 
 
-			' Read each protein in the input file and process appropriately
-			mInputFileProteinsProcessed = 0
-			mInputFileLineSkipCount = 0
-			mInputFileLinesRead = 0
-			Do
-				blnInputProteinFound = objFastaFileReader.ReadNextProteinEntry()
-				mInputFileLineSkipCount += objFastaFileReader.LineSkipCount
+            ' Read each protein in the input file and process appropriately
+            mInputFileProteinsProcessed = 0
+            mInputFileLineSkipCount = 0
+            mInputFileLinesRead = 0
+            Do
+                blnInputProteinFound = objFastaFileReader.ReadNextProteinEntry()
+                mInputFileLineSkipCount += objFastaFileReader.LineSkipCount
 
-				If blnInputProteinFound Then
-					mInputFileProteinsProcessed += 1
-					mInputFileLinesRead = objFastaFileReader.LinesRead
+                If blnInputProteinFound Then
+                    mInputFileProteinsProcessed += 1
+                    mInputFileLinesRead = objFastaFileReader.LinesRead
 
-					intOutputFileIndex = GetTargetFileNum(intSplitCount, objOutputFiles) - 1
+                    intOutputFileIndex = GetTargetFileNum(intSplitCount, objOutputFiles) - 1
 
-					If intOutputFileIndex < 0 OrElse intOutputFileIndex >= objOutputFiles.Count Then
-						Console.WriteLine("Programming bug: index is outside the expected range.  Defaulting to use OutputFileIndex=0")
-						intOutputFileIndex = 0
-					End If
+                    If intOutputFileIndex < 0 OrElse intOutputFileIndex >= objOutputFiles.Count Then
+                        Console.WriteLine("Programming bug: index is outside the expected range.  Defaulting to use OutputFileIndex=0")
+                        intOutputFileIndex = 0
+                    End If
 
-					' Append the current protein to the file at index intOutputFileIndex
-					objOutputFiles(intOutputFileIndex).StoreProtein(objFastaFileReader.ProteinName, objFastaFileReader.ProteinDescription, objFastaFileReader.ProteinSequence)
+                    ' Append the current protein to the file at index intOutputFileIndex
+                    objOutputFiles(intOutputFileIndex).StoreProtein(objFastaFileReader.ProteinName, objFastaFileReader.ProteinDescription, objFastaFileReader.ProteinSequence)
 
-					UpdateProgress(objFastaFileReader.PercentFileProcessed())
-				End If
-			Loop While blnInputProteinFound
+                    UpdateProgress(objFastaFileReader.PercentFileProcessed())
+                End If
+            Loop While blnInputProteinFound
 
-			' Close the input file
-			objFastaFileReader.CloseFile()
+            ' Close the input file
+            objFastaFileReader.CloseFile()
 
-			' Close the output files
-			' Store the info on the newly created files in mSplitFastaFileInfo
-			For intIndex = 0 To intSplitCount - 1
-				objOutputFiles(intIndex).CloseFile()
+            ' Close the output files
+            ' Store the info on the newly created files in mSplitFastaFileInfo
+            For intIndex = 0 To intSplitCount - 1
+                objOutputFiles(intIndex).CloseFile()
 
-				Dim udtFileInfo = New udtFastaFileInfoType
-				udtFileInfo.FilePath = objOutputFiles(intIndex).OutputFilePath
-				udtFileInfo.NumProteins = objOutputFiles(intIndex).TotalProteinsInFile
-				udtFileInfo.NumResidues = objOutputFiles(intIndex).TotalResiduesInFile
+                Dim udtFileInfo = New udtFastaFileInfoType
+                udtFileInfo.FilePath = objOutputFiles(intIndex).OutputFilePath
+                udtFileInfo.NumProteins = objOutputFiles(intIndex).TotalProteinsInFile
+                udtFileInfo.NumResidues = objOutputFiles(intIndex).TotalResiduesInFile
 
-				mSplitFastaFileInfo.Add(udtFileInfo)
-			Next
+                mSplitFastaFileInfo.Add(udtFileInfo)
+            Next
 
-			' Create the stats file
-			WriteStatsFile(strOutputFilePathBase & "_SplitStats.txt", intSplitCount, objOutputFiles)
+            ' Create the stats file
+            WriteStatsFile(strOutputFilePathBase & "_SplitStats.txt", intSplitCount, objOutputFiles)
 
-			UpdateProgress("Done: Processed " & mInputFileProteinsProcessed.ToString("###,##0") & " proteins (" & mInputFileLinesRead.ToString("###,###,##0") & " lines)", 100)
+            UpdateProgress("Done: Processed " & mInputFileProteinsProcessed.ToString("###,##0") & " proteins (" & mInputFileLinesRead.ToString("###,###,##0") & " lines)", 100)
 
-			blnSuccess = True
+            blnSuccess = True
 
-		Catch ex As Exception
-			HandleException("Error in SplitFastaFile", ex)
-			blnSuccess = False
-		End Try
+        Catch ex As Exception
+            HandleException("Error in SplitFastaFile", ex)
+            blnSuccess = False
+        End Try
 
-		Return blnSuccess
+        Return blnSuccess
 
-	End Function
+    End Function
 
-    ' Main processing function -- Calls SplitFastaFile
-    Public Overloads Overrides Function ProcessFile(ByVal strInputFilePath As String, ByVal strOutputFolderPath As String, ByVal strParameterFilePath As String, ByVal blnResetErrorCode As Boolean) As Boolean
+    ''' <summary>
+    ''' Main processing function -- Calls SplitFastaFile
+    ''' </summary>
+    ''' <param name="strInputFilePath"></param>
+    ''' <param name="strOutputFolderPath"></param>
+    ''' <param name="strParameterFilePath"></param>
+    ''' <param name="blnResetErrorCode"></param>
+    ''' <returns></returns>
+    Public Overloads Overrides Function ProcessFile(strInputFilePath As String, strOutputFolderPath As String, strParameterFilePath As String, blnResetErrorCode As Boolean) As Boolean
         ' Returns True if success, False if failure
 
-        Dim ioFile As System.IO.FileInfo
+        Dim ioFile As FileInfo
         Dim strInputFilePathFull As String
 
         Dim blnSuccess As Boolean
@@ -538,60 +545,60 @@ Public Class clsFastaFileSplitter
         If Not LoadParameterFileSettings(strParameterFilePath) Then
             ShowErrorMessage("Parameter file load error: " & strParameterFilePath)
 
-            If MyBase.ErrorCode = clsProcessFilesBaseClass.eProcessFilesErrorCodes.NoError Then
-                MyBase.SetBaseClassErrorCode(clsProcessFilesBaseClass.eProcessFilesErrorCodes.InvalidParameterFile)
+            If MyBase.ErrorCode = eProcessFilesErrorCodes.NoError Then
+                MyBase.SetBaseClassErrorCode(eProcessFilesErrorCodes.InvalidParameterFile)
             End If
             Return False
         End If
 
-		Try
-			If strInputFilePath Is Nothing OrElse strInputFilePath.Length = 0 Then
-				ShowMessage("Input file name is empty")
-				MyBase.SetBaseClassErrorCode(clsProcessFilesBaseClass.eProcessFilesErrorCodes.InvalidInputFilePath)
-			Else
+        Try
+            If strInputFilePath Is Nothing OrElse strInputFilePath.Length = 0 Then
+                ShowMessage("Input file name is empty")
+                MyBase.SetBaseClassErrorCode(eProcessFilesErrorCodes.InvalidInputFilePath)
+            Else
 
-				Console.WriteLine()
-				Console.WriteLine("Parsing " & System.IO.Path.GetFileName(strInputFilePath))
+                Console.WriteLine()
+                Console.WriteLine("Parsing " & Path.GetFileName(strInputFilePath))
 
-				' Note that CleanupFilePaths() will update mOutputFolderPath, which is used by LogMessage()
-				If Not CleanupFilePaths(strInputFilePath, strOutputFolderPath) Then
-					MyBase.SetBaseClassErrorCode(clsProcessFilesBaseClass.eProcessFilesErrorCodes.FilePathError)
-				Else
+                ' Note that CleanupFilePaths() will update mOutputFolderPath, which is used by LogMessage()
+                If Not CleanupFilePaths(strInputFilePath, strOutputFolderPath) Then
+                    MyBase.SetBaseClassErrorCode(eProcessFilesErrorCodes.FilePathError)
+                Else
 
-					MyBase.ResetProgress()
+                    MyBase.ResetProgress()
 
-					Try
-						' Obtain the full path to the input file
-						ioFile = New System.IO.FileInfo(strInputFilePath)
-						strInputFilePathFull = ioFile.FullName
+                    Try
+                        ' Obtain the full path to the input file
+                        ioFile = New FileInfo(strInputFilePath)
+                        strInputFilePathFull = ioFile.FullName
 
-						blnSuccess = SplitFastaFile(strInputFilePathFull, strOutputFolderPath, mSplitCount)
+                        blnSuccess = SplitFastaFile(strInputFilePathFull, strOutputFolderPath, mSplitCount)
 
-						If blnSuccess Then
-							ShowMessage(String.Empty, False)
-						Else
-							SetLocalErrorCode(eFastaFileSplitterErrorCodes.UnspecifiedError)
-							ShowErrorMessage("Error")
-						End If
+                        If blnSuccess Then
+                            ShowMessage(String.Empty, False)
+                        Else
+                            SetLocalErrorCode(eFastaFileSplitterErrorCodes.UnspecifiedError)
+                            ShowErrorMessage("Error")
+                        End If
 
-					Catch ex As Exception
-						HandleException("Error calling SplitFastaFile", ex)
-					End Try
-				End If
-			End If
-		Catch ex As Exception
-			HandleException("Error in ProcessFile", ex)
-		End Try
+                    Catch ex As Exception
+                        HandleException("Error calling SplitFastaFile", ex)
+                    End Try
+                End If
+            End If
+        Catch ex As Exception
+            HandleException("Error in ProcessFile", ex)
+        End Try
 
-		Return blnSuccess
+        Return blnSuccess
 
-	End Function
+    End Function
 
-    Private Sub SetLocalErrorCode(ByVal eNewErrorCode As eFastaFileSplitterErrorCodes)
+    Private Sub SetLocalErrorCode(eNewErrorCode As eFastaFileSplitterErrorCodes)
         SetLocalErrorCode(eNewErrorCode, False)
     End Sub
 
-    Private Sub SetLocalErrorCode(ByVal eNewErrorCode As eFastaFileSplitterErrorCodes, ByVal blnLeaveExistingErrorCodeUnchanged As Boolean)
+    Private Sub SetLocalErrorCode(eNewErrorCode As eFastaFileSplitterErrorCodes, blnLeaveExistingErrorCodeUnchanged As Boolean)
 
         If blnLeaveExistingErrorCodeUnchanged AndAlso mLocalErrorCode <> eFastaFileSplitterErrorCodes.NoError Then
             ' An error code is already defined; do not change it
@@ -599,57 +606,57 @@ Public Class clsFastaFileSplitter
             mLocalErrorCode = eNewErrorCode
 
             If eNewErrorCode = eFastaFileSplitterErrorCodes.NoError Then
-                If MyBase.ErrorCode = clsProcessFilesBaseClass.eProcessFilesErrorCodes.LocalizedError Then
-                    MyBase.SetBaseClassErrorCode(clsProcessFilesBaseClass.eProcessFilesErrorCodes.NoError)
+                If MyBase.ErrorCode = eProcessFilesErrorCodes.LocalizedError Then
+                    MyBase.SetBaseClassErrorCode(eProcessFilesErrorCodes.NoError)
                 End If
             Else
-                MyBase.SetBaseClassErrorCode(clsProcessFilesBaseClass.eProcessFilesErrorCodes.LocalizedError)
+                MyBase.SetBaseClassErrorCode(eProcessFilesErrorCodes.LocalizedError)
             End If
         End If
 
     End Sub
 
-    Protected Sub WriteStatsFile(ByVal strStatsFilePath As String, ByVal intSplitCount As Integer, ByRef objOutputFiles() As clsFastaOutputFile)
+    Protected Sub WriteStatsFile(strStatsFilePath As String, intSplitCount As Integer, ByRef objOutputFiles() As clsFastaOutputFile)
 
-		Dim intFileIndex As Integer
+        Dim intFileIndex As Integer
 
-        Dim ioFileInfo As System.IO.FileInfo
+        Dim ioFileInfo As FileInfo
 
         Try
 
             ' Sleep 250 milliseconds to give the system time to close all of the file handles
-            System.Threading.Thread.Sleep(250)
+            Thread.Sleep(250)
 
-			Using swOutfile As System.IO.StreamWriter = New System.IO.StreamWriter(New System.IO.FileStream(strStatsFilePath, IO.FileMode.Create, IO.FileAccess.Write, IO.FileShare.Read))
+            Using statsFileWriter = New StreamWriter(New FileStream(strStatsFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
 
-				swOutfile.WriteLine("Section" & ControlChars.Tab & _
-					 "Proteins" & ControlChars.Tab & _
-					 "Residues" & ControlChars.Tab & _
-					 "FileSize_MB" & ControlChars.Tab & _
-					 "FileName")
+                statsFileWriter.WriteLine("Section" & ControlChars.Tab &
+                     "Proteins" & ControlChars.Tab &
+                     "Residues" & ControlChars.Tab &
+                     "FileSize_MB" & ControlChars.Tab &
+                     "FileName")
 
-				For intFileIndex = 0 To intSplitCount - 1
+                For intFileIndex = 0 To intSplitCount - 1
 
-					swOutfile.Write((intFileIndex + 1).ToString & ControlChars.Tab & _
-					 objOutputFiles(intFileIndex).TotalProteinsInFile & ControlChars.Tab & _
-					 objOutputFiles(intFileIndex).TotalResiduesInFile)
+                    statsFileWriter.Write((intFileIndex + 1).ToString & ControlChars.Tab &
+                     objOutputFiles(intFileIndex).TotalProteinsInFile & ControlChars.Tab &
+                     objOutputFiles(intFileIndex).TotalResiduesInFile)
 
-					Try
-						ioFileInfo = New System.IO.FileInfo(objOutputFiles(intFileIndex).OutputFilePath)
+                    Try
+                        ioFileInfo = New FileInfo(objOutputFiles(intFileIndex).OutputFilePath)
 
-						swOutfile.Write(ControlChars.Tab & (ioFileInfo.Length / 1024.0 / 1024.0).ToString("0.000"))
-					Catch ex As Exception
-						' Error obtaining a FileInfo object; that's odd
-						swOutfile.Write(ControlChars.Tab & "??")
-					End Try
+                        statsFileWriter.Write(ControlChars.Tab & (ioFileInfo.Length / 1024.0 / 1024.0).ToString("0.000"))
+                    Catch ex As Exception
+                        ' Error obtaining a FileInfo object; that's odd
+                        statsFileWriter.Write(ControlChars.Tab & "??")
+                    End Try
 
-					swOutfile.WriteLine(ControlChars.Tab & System.IO.Path.GetFileName(objOutputFiles(intFileIndex).OutputFilePath))
-				Next
-			End Using
+                    statsFileWriter.WriteLine(ControlChars.Tab & Path.GetFileName(objOutputFiles(intFileIndex).OutputFilePath))
+                Next
+            End Using
 
         Catch ex As Exception
             HandleException("Error in WriteStatsFile", ex)
-		End Try
+        End Try
 
     End Sub
 
@@ -679,7 +686,7 @@ Public Class clsFastaFileSplitter
             Get
                 Return mReadonlyClass
             End Get
-            Set(ByVal Value As Boolean)
+            Set
                 If Not mReadonlyClass Then
                     mReadonlyClass = Value
                 End If
@@ -690,7 +697,7 @@ Public Class clsFastaFileSplitter
             Get
                 Return mProteinLineStartChar
             End Get
-            Set(ByVal Value As Char)
+            Set
                 If Not Value = Nothing AndAlso Not mReadonlyClass Then
                     mProteinLineStartChar = Value
                 End If
@@ -701,7 +708,7 @@ Public Class clsFastaFileSplitter
             Get
                 Return mProteinLineAccessionEndChar
             End Get
-            Set(ByVal Value As Char)
+            Set
                 If Not Value = Nothing AndAlso Not mReadonlyClass Then
                     mProteinLineAccessionEndChar = Value
                 End If
@@ -712,7 +719,7 @@ Public Class clsFastaFileSplitter
             Get
                 Return mLookForAddnlRefInDescription
             End Get
-            Set(ByVal Value As Boolean)
+            Set
                 If Not mReadonlyClass Then
                     mLookForAddnlRefInDescription = Value
                 End If
@@ -723,7 +730,7 @@ Public Class clsFastaFileSplitter
             Get
                 Return mAddnlRefSepChar
             End Get
-            Set(ByVal Value As Char)
+            Set
                 If Not Value = Nothing AndAlso Not mReadonlyClass Then
                     mAddnlRefSepChar = Value
                 End If
@@ -734,7 +741,7 @@ Public Class clsFastaFileSplitter
             Get
                 Return mAddnlRefAccessionSepChar
             End Get
-            Set(ByVal Value As Char)
+            Set
                 If Not Value = Nothing AndAlso Not mReadonlyClass Then
                     mAddnlRefAccessionSepChar = Value
                 End If
