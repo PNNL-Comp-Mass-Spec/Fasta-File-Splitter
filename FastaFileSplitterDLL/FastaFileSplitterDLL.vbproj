@@ -68,9 +68,6 @@
     </Compile>
     <Compile Include="clsFastaFileSplitter.vb" />
     <Compile Include="clsFastaOutputFile.vb" />
-    <Compile Include="clsProcessFilesBaseClass.vb" />
-    <Compile Include="clsProcessFilesOrFoldersBase.vb" />
-    <Compile Include="clsXmlSettingsFileAccessor.vb" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="My Project\" />

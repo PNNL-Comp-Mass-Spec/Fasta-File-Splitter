@@ -8,12 +8,15 @@ Option Strict On
 ' Started April 1, 2010
 
 Imports System.IO
+Imports System.Reflection
+Imports System.Threading
+Imports PRISM
 
 Public Class clsFastaFileSplitter
-    Inherits clsProcessFilesBaseClass
+    Inherits FileProcessor.ProcessFilesBase
 
     Public Sub New()
-		MyBase.mFileDate = "April 25, 2014"
+        mFileDate = "July 23, 2018"
         InitializeLocalVariables()
     End Sub
 
