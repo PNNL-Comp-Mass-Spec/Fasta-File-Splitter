@@ -38,11 +38,6 @@ Public Class clsFastaFileSplitter
 #End Region
 
 #Region "Structures"
-    Public Structure udtProteinInfoType
-        Public Name As String
-        Public Description As String
-        Public Sequence As String
-    End Structure
 
     Public Structure udtFastaFileInfoType
         Public FilePath As String
@@ -669,36 +664,21 @@ Public Class clsFastaFileSplitter
         End Sub
 
 #Region "Classwide Variables"
-        Private mReadonlyClass As Boolean
 
         Private mProteinLineStartChar As Char
         Private mProteinLineAccessionEndChar As Char
-
-        Private mLookForAddnlRefInDescription As Boolean
-
-        Private mAddnlRefSepChar As Char
         Private mAddnlRefAccessionSepChar As Char
 
 #End Region
 
 #Region "Processing Options Interface Functions"
-        Public Property ReadonlyClass() As Boolean
-            Get
-                Return mReadonlyClass
-            End Get
-            Set
-                If Not mReadonlyClass Then
-                    mReadonlyClass = Value
-                End If
-            End Set
-        End Property
 
         Public Property ProteinLineStartChar() As Char
             Get
                 Return mProteinLineStartChar
             End Get
             Set
-                If Not Value = Nothing AndAlso Not mReadonlyClass Then
+                If Not Value = Nothing Then
                     mProteinLineStartChar = Value
                 End If
             End Set
@@ -709,30 +689,8 @@ Public Class clsFastaFileSplitter
                 Return mProteinLineAccessionEndChar
             End Get
             Set
-                If Not Value = Nothing AndAlso Not mReadonlyClass Then
+                If Not Value = Nothing Then
                     mProteinLineAccessionEndChar = Value
-                End If
-            End Set
-        End Property
-
-        Public Property LookForAddnlRefInDescription() As Boolean
-            Get
-                Return mLookForAddnlRefInDescription
-            End Get
-            Set
-                If Not mReadonlyClass Then
-                    mLookForAddnlRefInDescription = Value
-                End If
-            End Set
-        End Property
-
-        Public Property AddnlRefSepChar() As Char
-            Get
-                Return mAddnlRefSepChar
-            End Get
-            Set
-                If Not Value = Nothing AndAlso Not mReadonlyClass Then
-                    mAddnlRefSepChar = Value
                 End If
             End Set
         End Property
@@ -742,7 +700,7 @@ Public Class clsFastaFileSplitter
                 Return mAddnlRefAccessionSepChar
             End Get
             Set
-                If Not Value = Nothing AndAlso Not mReadonlyClass Then
+                If Not Value = Nothing Then
                     mAddnlRefAccessionSepChar = Value
                 End If
             End Set
