@@ -16,7 +16,7 @@ Public Class clsFastaFileSplitter
     Inherits FileProcessor.ProcessFilesBase
 
     Public Sub New()
-        mFileDate = "July 23, 2018"
+        mFileDate = "October 18, 2018"
         InitializeLocalVariables()
     End Sub
 
