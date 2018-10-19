@@ -103,8 +103,11 @@ Module modMain
                     .SplitCount = mSplitCount
                 End With
 
-                If mRecurseFolders Then
-                    If mFastaFileSplitter.ProcessFilesAndRecurseFolders(mInputFilePath, mOutputFolderName, mOutputFolderAlternatePath, mRecreateFolderHierarchyInAlternatePath, mParameterFilePath, mRecurseFoldersMaxLevels) Then
+                If mRecurseDirectories Then
+                    If mFastaFileSplitter.ProcessFilesAndRecurseDirectories(
+                        mInputFilePath, mOutputDirectoryName,
+                        mOutputDirectoryAlternatePath, mRecreateDirectoryHierarchyInAlternatePath,
+                        mParameterFilePath, mMaxLevelsToRecurse) Then
                         intReturnCode = 0
                     Else
                         intReturnCode = mFastaFileSplitter.ErrorCode
@@ -133,7 +136,7 @@ Module modMain
     End Function
 
     Private Function GetAppVersion() As String
-        Return FileProcessor.ProcessFilesOrFoldersBase.GetAppVersion(PROGRAM_DATE)
+        Return FileProcessor.ProcessFilesOrDirectoriesBase.GetAppVersion(PROGRAM_DATE)
     End Function
 
     Private Function SetOptionsUsingCommandLineParameters(objParseCommandLine As clsParseCommandLine) As Boolean
@@ -204,7 +207,7 @@ Module modMain
             Console.WriteLine()
 
             Console.WriteLine("Program syntax:")
-            Console.WriteLine(Path.GetFileName(FileProcessor.ProcessFilesOrFoldersBase.GetAppPath()) &
+            Console.WriteLine(Path.GetFileName(FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath()) &
                               " /I:SourceFastaFile [/O:OutputFolderPath]")
             Console.WriteLine(" [/N:SplitCount] [/P:ParameterFilePath] ")
             Console.WriteLine(" [/S:[MaxLevel]] [/A:AlternateOutputFolderPath] [/R] [/L]")
