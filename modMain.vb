@@ -1,6 +1,6 @@
 ﻿Option Strict On
 
-' This program can be used to split apart a protein fasta file into a number of sections
+' This program can be used to split apart a protein Fasta file into a number of sections
 ' Although the splitting is random, each section will have a nearly identical number of residues
 '
 ' -------------------------------------------------------------------------------
@@ -21,20 +21,20 @@ Imports PRISM
 
 Module modMain
 
-    Public Const PROGRAM_DATE As String = "July 23, 2018"
+    Public Const PROGRAM_DATE As String = "October 18, 2018"
 
     Private mInputFilePath As String
 
     Private mSplitCount As Integer
 
-    Private mOutputFolderName As String             ' Optional
-    Private mParameterFilePath As String            ' Optional
+    Private mOutputDirectoryName As String              ' Optional
+    Private mParameterFilePath As String                ' Optional
 
-    Private mOutputFolderAlternatePath As String                ' Optional
-    Private mRecreateFolderHierarchyInAlternatePath As Boolean  ' Optional
+    Private mOutputDirectoryAlternatePath As String                ' Optional
+    Private mRecreateDirectoryHierarchyInAlternatePath As Boolean  ' Optional
 
-    Private mRecurseFolders As Boolean
-    Private mRecurseFoldersMaxLevels As Integer
+    Private mRecurseDirectories As Boolean
+    Private mMaxLevelsToRecurse As Integer
 
     Private mLogMessagesToFile As Boolean
 
@@ -64,11 +64,11 @@ Module modMain
         mInputFilePath = String.Empty
         mSplitCount = clsFastaFileSplitter.DEFAULT_SPLIT_COUNT
 
-        mOutputFolderName = String.Empty
+        mOutputDirectoryName = String.Empty
         mParameterFilePath = String.Empty
 
-        mRecurseFolders = False
-        mRecurseFoldersMaxLevels = 0
+        mRecurseDirectories = False
+        mMaxLevelsToRecurse = 0
 
         mLogMessagesToFile = False
 
@@ -104,7 +104,7 @@ Module modMain
                         intReturnCode = mFastaFileSplitter.ErrorCode
                     End If
                 Else
-                    If mFastaFileSplitter.ProcessFilesWildcard(mInputFilePath, mOutputFolderName, mParameterFilePath) Then
+                    If mFastaFileSplitter.ProcessFilesWildcard(mInputFilePath, mOutputDirectoryName, mParameterFilePath) Then
                         intReturnCode = 0
                     Else
                         intReturnCode = mFastaFileSplitter.ErrorCode
@@ -139,7 +139,7 @@ Module modMain
         Try
             ' Make sure no invalid parameters are present
             If objParseCommandLine.InvalidParametersPresent(lstValidParameters) Then
-                ConsoleMsgUtils.ShowErrors("Invalid commmand line parameters",
+                ConsoleMsgUtils.ShowErrors("Invalid command line parameters",
                   (From item In objParseCommandLine.InvalidParameters(lstValidParameters) Select "/" + item).ToList())
                 Return False
             Else
@@ -161,20 +161,20 @@ Module modMain
                     End If
 
 
-                    If .RetrieveValueForParameter("O", strValue) Then mOutputFolderName = strValue
+                    If .RetrieveValueForParameter("O", strValue) Then mOutputDirectoryName = strValue
 
                     If .RetrieveValueForParameter("P", strValue) Then mParameterFilePath = strValue
 
                     If .RetrieveValueForParameter("S", strValue) Then
-                        mRecurseFolders = True
-                        If Not Integer.TryParse(strValue, mRecurseFoldersMaxLevels) Then
-                            mRecurseFoldersMaxLevels = 0
+                        mRecurseDirectories = True
+                        If Not Integer.TryParse(strValue, mMaxLevelsToRecurse) Then
+                            mMaxLevelsToRecurse = 0
                         End If
                     End If
-                    If .RetrieveValueForParameter("A", strValue) Then mOutputFolderAlternatePath = strValue
-                    If .RetrieveValueForParameter("R", strValue) Then mRecreateFolderHierarchyInAlternatePath = True
+                    If .RetrieveValueForParameter("A", strValue) Then mOutputDirectoryAlternatePath = strValue
+                    If .IsParameterPresent("R") Then mRecreateDirectoryHierarchyInAlternatePath = True
 
-                    If .RetrieveValueForParameter("L", strValue) Then mLogMessagesToFile = True
+                    If .IsParameterPresent("L") Then mLogMessagesToFile = True
 
                 End With
 

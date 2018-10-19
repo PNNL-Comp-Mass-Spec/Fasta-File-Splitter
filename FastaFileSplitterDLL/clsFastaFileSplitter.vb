@@ -335,7 +335,7 @@ Public Class clsFastaFileSplitter
     End Function
 
     Protected Function OpenInputFile(strInputFilePath As String,
-                                     strOutputFolderPath As String,
+                                     strOutputDirectoryPath As String,
                                      strOutputFileNameBaseBaseOverride As String,
                                      ByRef objFastaFileReader As ProteinFileReader.FastaFileReader,
                                      ByRef strOutputFilePathBase As String) As Boolean
@@ -381,16 +381,16 @@ Public Class clsFastaFileSplitter
                     strOutputFileNameBase = Path.GetFileNameWithoutExtension(strInputFilePath)
                 End If
 
-                If strOutputFolderPath Is Nothing OrElse strOutputFolderPath.Length = 0 Then
-                    ' This code likely won't be reached since CleanupFilePaths() should have already initialized strOutputFolderPath
+                If strOutputDirectoryPath Is Nothing OrElse strOutputDirectoryPath.Length = 0 Then
+                    ' This code likely won't be reached since CleanupFilePaths() should have already initialized strOutputDirectoryPath
                     Dim fiInputFile As FileInfo
                     fiInputFile = New FileInfo(strInputFilePath)
 
-                    strOutputFolderPath = fiInputFile.Directory.FullName
+                    strOutputDirectoryPath = fiInputFile.Directory.FullName
                 End If
 
                 ' Define the full path to output file base name
-                strOutputFilePathBase = Path.Combine(strOutputFolderPath, strOutputFileNameBase)
+                strOutputFilePathBase = Path.Combine(strOutputDirectoryPath, strOutputFileNameBase)
 
                 blnSuccess = True
             End If
@@ -405,21 +405,21 @@ Public Class clsFastaFileSplitter
 
     End Function
 
-    Public Function SplitFastaFile(strInputFastaFilePath As String, strOutputFolderPath As String, intSplitCount As Integer) As Boolean
-        Return SplitFastaFile(strInputFastaFilePath, strOutputFolderPath, String.Empty, intSplitCount)
+    Public Function SplitFastaFile(strInputFastaFilePath As String, strOutputDirectoryPath As String, intSplitCount As Integer) As Boolean
+        Return SplitFastaFile(strInputFastaFilePath, strOutputDirectoryPath, String.Empty, intSplitCount)
     End Function
 
     ''' <summary>
     ''' Split strInputFastaFilePath into intSplitCount parts
-    ''' The output file will be created in strOutputFolderPath (or the same folder as strInputFastaFilePath if strOutputFolderPath is empty)
+    ''' The output file will be created in strOutputDirectoryPath (or the same directory as strInputFastaFilePath if strOutputDirectoryPath is empty)
     ''' </summary>
     ''' <param name="strInputFastaFilePath"></param>
-    ''' <param name="strOutputFolderPath"></param>
+    ''' <param name="strOutputDirectoryPath"></param>
     ''' <param name="strOutputFileNameBaseOverride"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function SplitFastaFile(strInputFastaFilePath As String,
-                                   strOutputFolderPath As String,
+                                   strOutputDirectoryPath As String,
                                    strOutputFileNameBaseOverride As String,
                                    intSplitCount As Integer) As Boolean
 
@@ -441,7 +441,7 @@ Public Class clsFastaFileSplitter
 
             ' Open the input file and define the output file path
             blnSuccess = OpenInputFile(strInputFastaFilePath,
-               strOutputFolderPath,
+               strOutputDirectoryPath,
                strOutputFileNameBaseOverride,
                objFastaFileReader,
                strOutputFilePathBase)
@@ -526,11 +526,11 @@ Public Class clsFastaFileSplitter
     ''' Main processing function -- Calls SplitFastaFile
     ''' </summary>
     ''' <param name="strInputFilePath"></param>
-    ''' <param name="strOutputFolderPath"></param>
+    ''' <param name="strOutputDirectoryPath"></param>
     ''' <param name="strParameterFilePath"></param>
     ''' <param name="blnResetErrorCode"></param>
     ''' <returns></returns>
-    Public Overloads Overrides Function ProcessFile(strInputFilePath As String, strOutputFolderPath As String, strParameterFilePath As String, blnResetErrorCode As Boolean) As Boolean
+    Public Overloads Overrides Function ProcessFile(strInputFilePath As String, strOutputDirectoryPath As String, strParameterFilePath As String, blnResetErrorCode As Boolean) As Boolean
         ' Returns True if success, False if failure
 
         Dim ioFile As FileInfo
@@ -560,8 +560,8 @@ Public Class clsFastaFileSplitter
                 Console.WriteLine()
                 Console.WriteLine("Parsing " & Path.GetFileName(strInputFilePath))
 
-                ' Note that CleanupFilePaths() will update mOutputFolderPath, which is used by LogMessage()
-                If Not CleanupFilePaths(strInputFilePath, strOutputFolderPath) Then
+                ' Note that CleanupFilePaths() will update mOutputDirectoryPath, which is used by LogMessage()
+                If Not CleanupFilePaths(strInputFilePath, strOutputDirectoryPath) Then
                     MyBase.SetBaseClassErrorCode(ProcessFilesErrorCodes.FilePathError)
                 Else
 
@@ -572,7 +572,7 @@ Public Class clsFastaFileSplitter
                         ioFile = New FileInfo(strInputFilePath)
                         strInputFilePathFull = ioFile.FullName
 
-                        blnSuccess = SplitFastaFile(strInputFilePathFull, strOutputFolderPath, mSplitCount)
+                        blnSuccess = SplitFastaFile(strInputFilePathFull, strOutputDirectoryPath, mSplitCount)
 
                         If blnSuccess Then
                             ShowMessage(String.Empty, False)
