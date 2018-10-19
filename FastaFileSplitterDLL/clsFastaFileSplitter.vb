@@ -42,7 +42,7 @@ Public Class clsFastaFileSplitter
     Public Structure udtFastaFileInfoType
         Public FilePath As String
         Public NumProteins As Integer
-        Public NumResidues As Int64
+        Public NumResidues As Long
     End Structure
 
 #End Region
@@ -201,10 +201,10 @@ Public Class clsFastaFileSplitter
         ' 2) Populate an array with the file numbers that have residue counts less than the average
         ' 3) Randomly choose one of those files
 
-        ' Note: intentially using a seed here
+        ' Note: intentionally using a seed here
         Static objRand As New Random(314159)
 
-        Dim lngSum As Int64
+        Dim lngSum As Long
         Dim dblAverageCount As Double
 
         Dim lstCandidates As List(Of Integer)
