@@ -1,4 +1,6 @@
-Fasta File Splitter
+# Fasta File Splitter
+
+## Overview
 
 This program reads a protein fasta file and splits it apart 
 into a number of sections.  Although the splitting is random, 
@@ -7,34 +9,41 @@ each section will have a nearly identical number of residues.
 Use the /N switch to the define the number of sections.
 
 Example:
-  FastaFileSplitter.exe H_sapiens_IPI_2008-02-07.fasta /N:25
+`FastaFileSplitter.exe H_sapiens_IPI_2008-02-07.fasta /N:25`
 
+## Syntax
+```
+FastaFileSplitter.exe /I:SourceFastaFile [/O:OutputFolderPath]
+ [/N:SplitCount] [/P:ParameterFilePath]
+ [/S:[MaxLevel]] [/A:AlternateOutputFolderPath] [/R] [/L]
+```
 
--------------------------------------------------------------------------------
-Written by Matthew Monroe for the Department of Energy (PNNL, Richland, WA)
-Copyright 2010, Battelle Memorial Institute.  All Rights Reserved.
+The input file path can contain the wildcard character * and should point to a
+fasta file. The output folder switch is optional.  If omitted, the output file
+will be created in the same folder as the input file.
 
-E-mail: matthew.monroe@pnl.gov or matt@alchemistmatt.com
-Website: http://ncrr.pnl.gov/ or http://omics.pnl.gov
--------------------------------------------------------------------------------
+Use /N to define the number of parts to split the input file into.
 
-Licensed under the Apache License, Version 2.0; you may not use this file except 
-in compliance with the License.  You may obtain a copy of the License at 
-http://www.apache.org/licenses/LICENSE-2.0
+The parameter file path is optional. If included, it should point to a valid XML
+parameter file.
 
-All publications that result from the use of this software should include 
-the following acknowledgment statement:
- Portions of this research were supported by the W.R. Wiley Environmental 
- Molecular Science Laboratory, a national scientific user facility sponsored 
- by the U.S. Department of Energy's Office of Biological and Environmental 
- Research and located at PNNL.  PNNL is operated by Battelle Memorial Institute 
- for the U.S. Department of Energy under contract DE-AC05-76RL0 1830.
+Use /S to process all valid files in the input folder and subfolders. Include a
+number after /S (like /S:2) to limit the level of subfolders to examine. When using /S, 
+you can redirect the output of the results using /A. When using /S, you can use /R 
+to re-create the input folder hierarchy in the alternate output folder (if defined).
 
-Notice: This computer software was prepared by Battelle Memorial Institute, 
-hereinafter the Contractor, under Contract No. DE-AC05-76RL0 1830 with the 
-Department of Energy (DOE).  All rights in the computer software are reserved 
-by DOE on behalf of the United States Government and the Contractor as 
-provided in the Contract.  NEITHER THE GOVERNMENT NOR THE CONTRACTOR MAKES ANY 
-WARRANTY, EXPRESS OR IMPLIED, OR ASSUMES ANY LIABILITY FOR THE USE OF THIS 
-SOFTWARE.  This notice including this sentence must appear on any copies of 
-this computer software.
+Use /L to log messages to a file.
+
+## Contacts
+
+Written by Matthew Monroe for the Department of Energy (PNNL, Richland, WA) \
+E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov \
+Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/
+
+## License
+
+The FASTA File Splitter is licensed under the 2-Clause BSD License; 
+you may not use this file except in compliance with the License.  You may obtain 
+a copy of the License at https://opensource.org/licenses/BSD-2-Clause
+
+Copyright 2018 Battelle Memorial Institute
