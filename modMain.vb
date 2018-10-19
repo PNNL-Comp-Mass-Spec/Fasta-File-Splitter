@@ -193,8 +193,9 @@ Module modMain
 
         Try
 
-            Console.WriteLine("This program can be used to split apart a protein fasta file into a number of sections. " &
-                              "Although the splitting is random, each section will have a nearly identical number of residues.")
+            Console.WriteLine(ConsoleMsgUtils.WrapParagraph(
+                "This program can be used to split apart a protein fasta file into a number of sections. " &
+                "Although the splitting is random, each section will have a nearly identical number of residues."))
             Console.WriteLine()
 
             Console.WriteLine("Program syntax:")
@@ -203,19 +204,22 @@ Module modMain
             Console.WriteLine(" [/N:SplitCount] [/P:ParameterFilePath] ")
             Console.WriteLine(" [/S:[MaxLevel]] [/A:AlternateOutputFolderPath] [/R] [/L]")
             Console.WriteLine()
-            Console.WriteLine("The input file path can contain the wildcard character * and should point to a fasta file. " &
-                              "The output folder switch is optional.  If omitted, the output file will be created in the same folder as the input file. ")
+            Console.WriteLine(ConsoleMsgUtils.WrapParagraph(
+                "The input file path can contain the wildcard character * and should point to a fasta file. " &
+                "The output folder switch is optional.  If omitted, the output file will be created in the same folder as the input file."))
             Console.WriteLine()
 
             Console.WriteLine("Use /N to define the number of parts to split the input file into.")
             Console.WriteLine()
 
-            Console.WriteLine("The parameter file path is optional.  If included, it should point to a valid XML parameter file.")
+            Console.WriteLine(ConsoleMsgUtils.WrapParagraph("The parameter file path is optional. " &
+                                                            "If included, it should point to a valid XML parameter file."))
             Console.WriteLine()
 
-            Console.WriteLine("Use /S to process all valid files in the input folder and subfolders. Include a number after /S (like /S:2) to limit the level of subfolders to examine. " &
-                              "When using /S, you can redirect the output of the results using /A. " &
-                              "When using /S, you can use /R to re-create the input folder hierarchy in the alternate output folder (if defined).")
+            Console.WriteLine(ConsoleMsgUtils.WrapParagraph(
+                "Use /S to process all valid files in the input folder and subfolders. Include a number after /S (like /S:2) to limit the level of subfolders to examine. " &
+                "When using /S, you can redirect the output of the results using /A. " &
+                "When using /S, you can use /R to re-create the input folder hierarchy in the alternate output folder (if defined)."))
 
             Console.WriteLine("Use /L to log messages to a file.")
             Console.WriteLine()
