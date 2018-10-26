@@ -493,10 +493,11 @@ Public Class clsFastaFileSplitter
             For intIndex = 0 To intSplitCount - 1
                 objOutputFiles(intIndex).CloseFile()
 
-                Dim udtFileInfo = New udtFastaFileInfoType
-                udtFileInfo.FilePath = objOutputFiles(intIndex).OutputFilePath
-                udtFileInfo.NumProteins = objOutputFiles(intIndex).TotalProteinsInFile
-                udtFileInfo.NumResidues = objOutputFiles(intIndex).TotalResiduesInFile
+                Dim udtFileInfo = New udtFastaFileInfoType With {
+                    .FilePath = objOutputFiles(intIndex).OutputFilePath,
+                    .NumProteins = objOutputFiles(intIndex).TotalProteinsInFile,
+                    .NumResidues = objOutputFiles(intIndex).TotalResiduesInFile
+                }
 
                 mSplitFastaFileInfo.Add(udtFileInfo)
             Next
