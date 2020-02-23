@@ -9,6 +9,7 @@ Option Strict On
 
 Imports System.IO
 Imports System.Reflection
+Imports System.Runtime.InteropServices
 Imports System.Threading
 Imports PRISM
 
@@ -326,12 +327,15 @@ Public Class clsFastaFileSplitter
 
     End Function
 
-    Protected Function OpenInputFile(strInputFilePath As String,
-                                     strOutputDirectoryPath As String,
-                                     strOutputFileNameBaseBaseOverride As String,
-                                     ByRef objFastaFileReader As ProteinFileReader.FastaFileReader,
-                                     ByRef strOutputFilePathBase As String) As Boolean
+    Private Function OpenInputFile(
+      inputFilePath As String,
+      outputDirectoryPath As String,
+      outputFileNameBaseBaseOverride As String,
+      <Out> ByRef fastaFileReader As ProteinFileReader.FastaFileReader,
+      <Out> ByRef outputFilePathBase As String) As Boolean
 
+        fastaFileReader = Nothing
+        outputFilePathBase = String.Empty
 
         Try
 
