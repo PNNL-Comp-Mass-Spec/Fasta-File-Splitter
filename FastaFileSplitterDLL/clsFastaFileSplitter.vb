@@ -142,11 +142,12 @@ Public Class clsFastaFileSplitter
     End Function
 
     Public Overrides Function GetDefaultExtensionsToParse() As IList(Of String)
-        Dim strExtensionsToParse = New List(Of String) From {
-            ".fasta"
+        Dim extensionsToParse = New List(Of String) From {
+            ".fasta",
+            ".faa"
         }
 
-        Return strExtensionsToParse
+        Return extensionsToParse
 
     End Function
 
