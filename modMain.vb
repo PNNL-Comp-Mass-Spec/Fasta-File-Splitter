@@ -42,13 +42,13 @@ Module modMain
     Private mLastProgressReportTime As DateTime
     Private mLastProgressReportValue As Integer
 
-    Private Sub DisplayProgressPercent(intPercentComplete As Integer, blnAddCarriageReturn As Boolean)
-        If blnAddCarriageReturn Then
+    Private Sub DisplayProgressPercent(percentComplete As Integer, addCarriageReturn As Boolean)
+        If addCarriageReturn Then
             Console.WriteLine()
         End If
-        If intPercentComplete > 100 Then intPercentComplete = 100
-        Console.Write("Processing: " & intPercentComplete.ToString & "% ")
-        If blnAddCarriageReturn Then
+        If percentComplete > 100 Then percentComplete = 100
+        Console.Write("Processing: " & percentComplete.ToString & "% ")
+        If addCarriageReturn Then
             Console.WriteLine()
         End If
     End Sub
@@ -56,9 +56,9 @@ Module modMain
     Public Function Main() As Integer
         ' Returns 0 if no error, error code if an error
 
-        Dim intReturnCode As Integer
-        Dim objParseCommandLine As New clsParseCommandLine
-        Dim blnProceed As Boolean
+        Dim returnCode As Integer
+        Dim commandLineParser As New clsParseCommandLine
+        Dim proceed As Boolean
 
         ' Initialize the options
         mInputFilePath = String.Empty
@@ -73,42 +73,39 @@ Module modMain
         mLogMessagesToFile = False
 
         Try
-            blnProceed = False
-            If objParseCommandLine.ParseCommandLine Then
-                If SetOptionsUsingCommandLineParameters(objParseCommandLine) Then blnProceed = True
+            proceed = False
+            If commandLineParser.ParseCommandLine Then
+                If SetOptionsUsingCommandLineParameters(commandLineParser) Then proceed = True
             End If
 
-            If Not blnProceed OrElse
-               objParseCommandLine.NeedToShowHelp OrElse
-               objParseCommandLine.ParameterCount + objParseCommandLine.NonSwitchParameterCount = 0 OrElse
+            If Not proceed OrElse
+               commandLineParser.NeedToShowHelp OrElse
+               commandLineParser.ParameterCount + commandLineParser.NonSwitchParameterCount = 0 OrElse
                mInputFilePath.Length = 0 Then
                 ShowProgramHelp()
-                intReturnCode = -1
+                returnCode = -1
             Else
 
-                mFastaFileSplitter = New clsFastaFileSplitter
-
-                ' Note: the following settings will be overridden if mParameterFilePath points to a valid parameter file that has these settings defined
-                With mFastaFileSplitter
+                ' Note: mSplitCount and mSplitCount will be overridden if mParameterFilePath points to a valid parameter file that has these settings defined
+                mFastaFileSplitter = New clsFastaFileSplitter(mSplitCount) With {
                     .LogMessagesToFile = mLogMessagesToFile
-                    .SplitCount = mSplitCount
-                End With
+                }
 
                 If mRecurseDirectories Then
                     If mFastaFileSplitter.ProcessFilesAndRecurseDirectories(
                         mInputFilePath, mOutputDirectoryName,
                         mOutputDirectoryAlternatePath, mRecreateDirectoryHierarchyInAlternatePath,
                         mParameterFilePath, mMaxLevelsToRecurse) Then
-                        intReturnCode = 0
+                        returnCode = 0
                     Else
-                        intReturnCode = mFastaFileSplitter.ErrorCode
+                        returnCode = mFastaFileSplitter.ErrorCode
                     End If
                 Else
                     If mFastaFileSplitter.ProcessFilesWildcard(mInputFilePath, mOutputDirectoryName, mParameterFilePath) Then
-                        intReturnCode = 0
+                        returnCode = 0
                     Else
-                        intReturnCode = mFastaFileSplitter.ErrorCode
-                        If intReturnCode <> 0 Then
+                        returnCode = mFastaFileSplitter.ErrorCode
+                        If returnCode <> 0 Then
                             Console.WriteLine("Error while processing: " & mFastaFileSplitter.GetErrorMessage())
                         End If
                     End If
@@ -119,10 +116,10 @@ Module modMain
 
         Catch ex As Exception
             ConsoleMsgUtils.ShowError("Error occurred in modMain->Main", ex)
-            intReturnCode = -1
+            returnCode = -1
         End Try
 
-        Return intReturnCode
+        Return returnCode
 
     End Function
 
@@ -130,62 +127,60 @@ Module modMain
         Return FileProcessor.ProcessFilesOrDirectoriesBase.GetAppVersion(PROGRAM_DATE)
     End Function
 
-    Private Function SetOptionsUsingCommandLineParameters(objParseCommandLine As clsParseCommandLine) As Boolean
+    Private Function SetOptionsUsingCommandLineParameters(commandLineParser As clsParseCommandLine) As Boolean
         ' Returns True if no problems; otherwise, returns false
 
-        Dim strValue As String = String.Empty
-        Dim lstValidParameters = New List(Of String) From {"I", "N", "O", "P", "S", "A", "R", "L"}
+        Dim value As String = String.Empty
+        Dim validParameters = New List(Of String) From {"I", "N", "O", "P", "S", "A", "R", "L"}
 
         Try
             ' Make sure no invalid parameters are present
-            If objParseCommandLine.InvalidParametersPresent(lstValidParameters) Then
+            If commandLineParser.InvalidParametersPresent(validParameters) Then
                 ConsoleMsgUtils.ShowErrors("Invalid command line parameters",
-                  (From item In objParseCommandLine.InvalidParameters(lstValidParameters) Select "/" + item).ToList())
+                  (From item In commandLineParser.InvalidParameters(validParameters) Select "/" + item).ToList())
                 Return False
-            Else
-                With objParseCommandLine
-                    ' Query objParseCommandLine to see if various parameters are present
-                    If .RetrieveValueForParameter("I", strValue) Then
-                        mInputFilePath = strValue
-                    ElseIf .NonSwitchParameterCount > 0 Then
-                        mInputFilePath = .RetrieveNonSwitchParameter(0)
-                    End If
-
-                    If .RetrieveValueForParameter("N", strValue) Then
-                        If Not Integer.TryParse(strValue, mSplitCount) Then
-                            ConsoleMsgUtils.ShowError("Error parsing number from the /N parameter; use /N:25 to specify the file be split into " &
-                                                      clsFastaFileSplitter.DEFAULT_SPLIT_COUNT & " parts")
-
-                            mSplitCount = clsFastaFileSplitter.DEFAULT_SPLIT_COUNT
-                        End If
-                    End If
-
-
-                    If .RetrieveValueForParameter("O", strValue) Then mOutputDirectoryName = strValue
-
-                    If .RetrieveValueForParameter("P", strValue) Then mParameterFilePath = strValue
-
-                    If .RetrieveValueForParameter("S", strValue) Then
-                        mRecurseDirectories = True
-                        If Not Integer.TryParse(strValue, mMaxLevelsToRecurse) Then
-                            mMaxLevelsToRecurse = 0
-                        End If
-                    End If
-                    If .RetrieveValueForParameter("A", strValue) Then mOutputDirectoryAlternatePath = strValue
-                    If .IsParameterPresent("R") Then mRecreateDirectoryHierarchyInAlternatePath = True
-
-                    If .IsParameterPresent("L") Then mLogMessagesToFile = True
-
-                End With
-
-                Return True
             End If
+
+
+            ' Query commandLineParser to see if various parameters are present
+            If commandLineParser.RetrieveValueForParameter("I", value) Then
+                mInputFilePath = value
+            ElseIf commandLineParser.NonSwitchParameterCount > 0 Then
+                mInputFilePath = commandLineParser.RetrieveNonSwitchParameter(0)
+            End If
+
+            If commandLineParser.RetrieveValueForParameter("N", value) Then
+                If Not Integer.TryParse(value, mSplitCount) Then
+                    ConsoleMsgUtils.ShowError("Error parsing number from the /N parameter; use /N:25 to specify the file be split into " &
+                                              clsFastaFileSplitter.DEFAULT_SPLIT_COUNT & " parts")
+
+                    mSplitCount = clsFastaFileSplitter.DEFAULT_SPLIT_COUNT
+                End If
+            End If
+
+
+            If commandLineParser.RetrieveValueForParameter("O", value) Then mOutputDirectoryName = value
+
+            If commandLineParser.RetrieveValueForParameter("P", value) Then mParameterFilePath = value
+
+            If commandLineParser.RetrieveValueForParameter("S", value) Then
+                mRecurseDirectories = True
+                If Not Integer.TryParse(value, mMaxLevelsToRecurse) Then
+                    mMaxLevelsToRecurse = 0
+                End If
+            End If
+
+            If commandLineParser.RetrieveValueForParameter("A", value) Then mOutputDirectoryAlternatePath = value
+            If commandLineParser.IsParameterPresent("R") Then mRecreateDirectoryHierarchyInAlternatePath = True
+
+            If commandLineParser.IsParameterPresent("L") Then mLogMessagesToFile = True
+
+            Return True
 
         Catch ex As Exception
             ConsoleMsgUtils.ShowError("Error parsing the command line parameters", ex)
+            Return False
         End Try
-
-        Return False
 
     End Function
 

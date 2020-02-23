@@ -28,19 +28,19 @@ Public Class clsFastaOutputFile
 
 #Region "Properties"
 
-    Public ReadOnly Property OutputFileIsOpen() As Boolean
+    Public ReadOnly Property OutputFileIsOpen As Boolean
         Get
             Return mOutputFileIsOpen
         End Get
     End Property
 
-    Public ReadOnly Property OutputFilePath() As String
+    Public ReadOnly Property OutputFilePath As String
         Get
             Return mOutputFilePath
         End Get
     End Property
 
-    Public Property ResiduesPerLine() As Integer
+    Public Property ResiduesPerLine As Integer
         Get
             Return mResiduesPerLine
         End Get
@@ -50,34 +50,34 @@ Public Class clsFastaOutputFile
         End Set
     End Property
 
-    Public ReadOnly Property TotalProteinsInFile() As Integer
+    Public ReadOnly Property TotalProteinsInFile As Integer
         Get
             Return mTotalProteinsInFile
         End Get
     End Property
 
-    Public ReadOnly Property TotalResiduesInFile() As Int64
+    Public ReadOnly Property TotalResiduesInFile As Int64
         Get
             Return mTotalResiduesInFile
         End Get
     End Property
 #End Region
 
-    Public Sub New(strOutputFilePath As String)
-        Me.New(strOutputFilePath, DEFAULT_PROTEIN_LINE_START_CHAR, DEFAULT_PROTEIN_LINE_ACCESSION_END_CHAR)
+    Public Sub New(outputFilePath As String)
+        Me.New(outputFilePath, DEFAULT_PROTEIN_LINE_START_CHAR, DEFAULT_PROTEIN_LINE_ACCESSION_END_CHAR)
     End Sub
 
-    Public Sub New(strOutputFilePath As String, chProteinLineStartChar As Char, chProteinLineAccessionEndChar As Char)
-        If strOutputFilePath Is Nothing OrElse strOutputFilePath.Length = 0 Then
+    Public Sub New(outputFilePath As String, proteinLineStartChar As Char, proteinLineAccessionEndChar As Char)
+        If outputFilePath Is Nothing OrElse outputFilePath.Length = 0 Then
             Throw New Exception("OutputFilePath is empty; cannot instantiate class")
         End If
-        mOutputFilePath = strOutputFilePath
+        mOutputFilePath = outputFilePath
 
-        mOutputFile = New StreamWriter(New FileStream(strOutputFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
+        mOutputFile = New StreamWriter(New FileStream(outputFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
         mOutputFileIsOpen = True
 
-        mProteinLineStartChar = chProteinLineStartChar
-        mProteinLineAccessionEndChar = chProteinLineAccessionEndChar
+        mProteinLineStartChar = proteinLineStartChar
+        mProteinLineAccessionEndChar = proteinLineAccessionEndChar
 
         mResiduesPerLine = DEFAULT_RESIDUES_PER_LINE
 
@@ -96,30 +96,27 @@ Public Class clsFastaOutputFile
         End Try
     End Sub
 
-    Public Sub StoreProtein(strProteinName As String, ByRef strDescription As String, ByRef strSequence As String)
-
-        Dim intStartIndex As Integer
-        Dim intCharCount As Integer
+    Public Sub StoreProtein(proteinName As String, ByRef description As String, ByRef sequence As String)
 
         If mOutputFileIsOpen Then
 
             Try
                 ' Write out the protein header and description line
-                mOutputFile.WriteLine(mProteinLineStartChar & strProteinName & mProteinLineAccessionEndChar & strDescription)
+                mOutputFile.WriteLine(mProteinLineStartChar & proteinName & mProteinLineAccessionEndChar & description)
 
                 ' Now write out the residues, storing mResiduesPerLine residues per line
-                intStartIndex = 0
-                Do While intStartIndex < strSequence.Length
-                    intCharCount = mResiduesPerLine
-                    If intStartIndex + intCharCount > strSequence.Length Then
-                        intCharCount = strSequence.Length - intStartIndex
+                Dim startIndex = 0
+                Do While startIndex < sequence.Length
+                    Dim charCount = mResiduesPerLine
+                    If startIndex + charCount > sequence.Length Then
+                        charCount = sequence.Length - startIndex
                     End If
-                    mOutputFile.WriteLine(strSequence.Substring(intStartIndex, intCharCount))
-                    intStartIndex += intCharCount
+                    mOutputFile.WriteLine(sequence.Substring(startIndex, charCount))
+                    startIndex += charCount
                 Loop
 
                 mTotalProteinsInFile += 1
-                mTotalResiduesInFile += strSequence.Length
+                mTotalResiduesInFile += sequence.Length
 
             Catch ex As Exception
                 Console.WriteLine("Error in StoreProtein: " & ex.Message)
