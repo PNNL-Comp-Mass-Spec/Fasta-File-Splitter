@@ -17,7 +17,7 @@ Public Class clsFastaFileSplitter
     Inherits FileProcessor.ProcessFilesBase
 
     Public Sub New()
-        mFileDate = "October 18, 2018"
+        mFileDate = "February 23, 2020"
         InitializeLocalVariables()
     End Sub
 
@@ -106,6 +106,12 @@ Public Class clsFastaFileSplitter
 
 #End Region
 
+    ''' <summary>
+    ''' Constructor
+    ''' </summary>
+    Public Sub New(Optional splitCount As Integer = 5)
+        FastaFileSplitCount = splitCount
+    End Sub
 
     Private Function CreateOutputFiles(
       splitCount As Integer,
