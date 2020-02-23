@@ -88,11 +88,11 @@ Public Class clsFastaFileSplitter
         End Get
     End Property
 
-    Public Property SplitCount() As Integer
+    Public Property FastaFileSplitCount As Integer
         Get
             Return mSplitCount
         End Get
-        Set
+        Private Set
             If Value < 0 Then Value = 0
             mSplitCount = Value
         End Set
