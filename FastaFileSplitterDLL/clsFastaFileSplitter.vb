@@ -16,11 +16,6 @@ Imports PRISM
 Public Class clsFastaFileSplitter
     Inherits FileProcessor.ProcessFilesBase
 
-    Public Sub New()
-        mFileDate = "February 23, 2020"
-        InitializeLocalVariables()
-    End Sub
-
 #Region "Constants and Enums"
 
     Public Const XML_SECTION_OPTIONS As String = "FastaFileSplitterOptions"
@@ -110,6 +105,9 @@ Public Class clsFastaFileSplitter
     ''' Constructor
     ''' </summary>
     Public Sub New(Optional splitCount As Integer = 5)
+        mFileDate = "February 23, 2020"
+        InitializeLocalVariables()
+
         FastaFileSplitCount = splitCount
     End Sub
 
@@ -273,7 +271,6 @@ Public Class clsFastaFileSplitter
         mSplitFastaFileInfo = New List(Of FastaFileInfoType)
 
         FastaFileOptions = New FastaFileOptionsClass
-
     End Sub
 
     ''' <summary>
