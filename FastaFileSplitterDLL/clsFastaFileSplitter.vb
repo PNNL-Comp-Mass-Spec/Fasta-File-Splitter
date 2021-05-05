@@ -343,7 +343,7 @@ Public Class clsFastaFileSplitter
 
         Try
 
-            If inputFilePath Is Nothing OrElse inputFilePath.Length = 0 Then
+            If String.IsNullOrWhiteSpace(inputFilePath) Then
                 SetBaseClassErrorCode(ProcessFilesErrorCodes.InvalidInputFilePath)
                 Return False
             End If
@@ -359,7 +359,7 @@ Public Class clsFastaFileSplitter
 
             ' Define the output file name
             Dim outputFileNameBase = String.Empty
-            If Not outputFileNameBaseBaseOverride Is Nothing AndAlso outputFileNameBaseBaseOverride.Length > 0 Then
+            If Not String.IsNullOrWhiteSpace(outputFileNameBaseBaseOverride) Then
                 If Path.HasExtension(outputFileNameBaseBaseOverride) Then
                     outputFileNameBase = String.Copy(outputFileNameBaseBaseOverride)
 

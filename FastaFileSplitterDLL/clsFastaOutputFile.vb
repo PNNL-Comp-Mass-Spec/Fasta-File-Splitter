@@ -87,7 +87,7 @@ Public Class clsFastaOutputFile
 
     Public Sub CloseFile()
         Try
-            If mOutputFileIsOpen AndAlso Not mOutputFile Is Nothing Then
+            If mOutputFileIsOpen AndAlso mOutputFile IsNot Nothing Then
                 mOutputFile.Close()
                 mOutputFileIsOpen = False
             End If
