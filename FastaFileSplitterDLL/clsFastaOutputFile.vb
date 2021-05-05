@@ -10,7 +10,7 @@ Public Class clsFastaOutputFile
     Public Const DEFAULT_RESIDUES_PER_LINE As Integer = 60
 #End Region
 
-#Region "Classwide Variables"
+#Region "Class wide Variables"
 
     Protected mOutputFileIsOpen As Boolean
     Protected mOutputFilePath As String

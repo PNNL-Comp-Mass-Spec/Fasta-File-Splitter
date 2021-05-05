@@ -43,7 +43,7 @@ Public Class clsFastaFileSplitter
 
 #End Region
 
-#Region "Classwide Variables"
+#Region "Class wide Variables"
     Private mSplitCount As Integer
 
     Private mInputFileProteinsProcessed As Integer
@@ -156,7 +156,7 @@ Public Class clsFastaFileSplitter
     End Function
 
     ''' <summary>
-    ''' Get the error message, or an empty string oif no error
+    ''' Get the error message, or an empty string if no error
     ''' </summary>
     ''' <returns></returns>
     Public Overrides Function GetErrorMessage() As String
