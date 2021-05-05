@@ -356,10 +356,6 @@ Public Class clsFastaFileSplitter
 
             ' Instantiate the protein file reader object (assuming inputFilePath is a .Fasta file)
             fastaFileReader = New ProteinFileReader.FastaFileReader
-            With fastaFileReader
-                .ProteinLineStartChar = FastaFileOptions.ProteinLineStartChar
-                .ProteinLineAccessionEndChar = FastaFileOptions.ProteinLineAccessionEndChar
-            End With
 
             ' Define the output file name
             Dim outputFileNameBase = String.Empty
@@ -656,57 +652,9 @@ Public Class clsFastaFileSplitter
     ''' Options class
     ''' </summary>
     Public Class FastaFileOptionsClass
+        Public ReadOnly Property ProteinLineStartChar As Char = ">"c
 
-        Public Sub New()
-            mProteinLineStartChar = ">"c
-            mProteinLineAccessionEndChar = " "c
-        End Sub
-
-#Region "Classwide Variables"
-
-        Private mProteinLineStartChar As Char
-        Private mProteinLineAccessionEndChar As Char
-        Private mAddnlRefAccessionSepChar As Char
-
-#End Region
-
-#Region "Processing Options Interface Functions"
-
-        Public Property ProteinLineStartChar As Char
-            Get
-                Return mProteinLineStartChar
-            End Get
-            Set
-                If Not Value = Nothing Then
-                    mProteinLineStartChar = Value
-                End If
-            End Set
-        End Property
-
-        Public Property ProteinLineAccessionEndChar As Char
-            Get
-                Return mProteinLineAccessionEndChar
-            End Get
-            Set
-                If Not Value = Nothing Then
-                    mProteinLineAccessionEndChar = Value
-                End If
-            End Set
-        End Property
-
-        ' ReSharper disable once UnusedMember.Global
-        Public Property AddnlRefAccessionSepChar As Char
-            Get
-                Return mAddnlRefAccessionSepChar
-            End Get
-            Set
-                If Not Value = Nothing Then
-                    mAddnlRefAccessionSepChar = Value
-                End If
-            End Set
-        End Property
-#End Region
-
+        Public Property ProteinLineAccessionEndChar As Char = " "c
     End Class
 
 End Class
