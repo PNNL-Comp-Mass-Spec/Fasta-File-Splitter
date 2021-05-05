@@ -23,7 +23,7 @@ Public Class clsFastaFileSplitter
     Public Const DEFAULT_SPLIT_COUNT As Integer = 10
 
     ' Error codes specialized for this class
-    Public Enum eFastaFileSplitterErrorCodes
+    Public Enum FastaFileSplitterErrorCode
         NoError = 0
         ErrorReadingInputFile = 1
         ErrorWritingOutputFile = 2
@@ -54,7 +54,7 @@ Public Class clsFastaFileSplitter
 
     Public FastaFileOptions As FastaFileOptionsClass
 
-    Private mLocalErrorCode As eFastaFileSplitterErrorCodes
+    Private mLocalErrorCode As FastaFileSplitterErrorCode
 #End Region
 
 #Region "Processing Options Interface Functions"
@@ -77,7 +77,7 @@ Public Class clsFastaFileSplitter
         End Get
     End Property
 
-    Public ReadOnly Property LocalErrorCode As eFastaFileSplitterErrorCodes
+    Public ReadOnly Property LocalErrorCode As FastaFileSplitterErrorCode
         Get
             Return mLocalErrorCode
         End Get
@@ -139,7 +139,7 @@ Public Class clsFastaFileSplitter
             Return True
         Catch ex As Exception
             HandleException("Error creating output file " & fileNum, ex)
-            SetLocalErrorCode(eFastaFileSplitterErrorCodes.ErrorWritingOutputFile)
+            SetLocalErrorCode(FastaFileSplitterErrorCode.ErrorWritingOutputFile)
             Return False
         End Try
 
@@ -166,16 +166,16 @@ Public Class clsFastaFileSplitter
         If ErrorCode = ProcessFilesErrorCodes.LocalizedError Or
            ErrorCode = ProcessFilesErrorCodes.NoError Then
             Select Case mLocalErrorCode
-                Case eFastaFileSplitterErrorCodes.NoError
+                Case FastaFileSplitterErrorCode.NoError
                     errorMessage = ""
 
-                Case eFastaFileSplitterErrorCodes.ErrorReadingInputFile
+                Case FastaFileSplitterErrorCode.ErrorReadingInputFile
                     errorMessage = "Error reading input file"
 
-                Case eFastaFileSplitterErrorCodes.ErrorWritingOutputFile
+                Case FastaFileSplitterErrorCode.ErrorWritingOutputFile
                     errorMessage = "Error writing to the output file"
 
-                Case eFastaFileSplitterErrorCodes.UnspecifiedError
+                Case FastaFileSplitterErrorCode.UnspecifiedError
                     errorMessage = "Unspecified localized error"
 
                 Case Else
@@ -260,7 +260,7 @@ Public Class clsFastaFileSplitter
     End Function
 
     Private Sub InitializeLocalVariables()
-        mLocalErrorCode = eFastaFileSplitterErrorCodes.NoError
+        mLocalErrorCode = FastaFileSplitterErrorCode.NoError
 
         FastaFileSplitCount = DEFAULT_SPLIT_COUNT
 
@@ -394,7 +394,7 @@ Public Class clsFastaFileSplitter
 
         Catch ex As Exception
             HandleException("OpenInputFile", ex)
-            SetLocalErrorCode(eFastaFileSplitterErrorCodes.ErrorReadingInputFile)
+            SetLocalErrorCode(FastaFileSplitterErrorCode.ErrorReadingInputFile)
             outputFilePathBase = String.Empty
             Return True
         End Try
@@ -452,7 +452,7 @@ Public Class clsFastaFileSplitter
 
             ' Attempt to open the input file
             If Not fastaFileReader.OpenFile(inputFastaFilePath) Then
-                SetLocalErrorCode(eFastaFileSplitterErrorCodes.ErrorReadingInputFile)
+                SetLocalErrorCode(FastaFileSplitterErrorCode.ErrorReadingInputFile)
                 Return False
             End If
 
@@ -535,7 +535,7 @@ Public Class clsFastaFileSplitter
         Dim success As Boolean
 
         If resetErrorCode Then
-            SetLocalErrorCode(eFastaFileSplitterErrorCodes.NoError)
+            SetLocalErrorCode(FastaFileSplitterErrorCode.NoError)
         End If
 
         If Not LoadParameterFileSettings(parameterFilePath) Then
@@ -573,7 +573,7 @@ Public Class clsFastaFileSplitter
                         If success Then
                             ShowMessage(String.Empty, False)
                         Else
-                            SetLocalErrorCode(eFastaFileSplitterErrorCodes.UnspecifiedError)
+                            SetLocalErrorCode(FastaFileSplitterErrorCode.UnspecifiedError)
                             ShowErrorMessage("Error")
                         End If
 
@@ -590,18 +590,18 @@ Public Class clsFastaFileSplitter
 
     End Function
 
-    Private Sub SetLocalErrorCode(eNewErrorCode As eFastaFileSplitterErrorCodes)
+    Private Sub SetLocalErrorCode(eNewErrorCode As FastaFileSplitterErrorCode)
         SetLocalErrorCode(eNewErrorCode, False)
     End Sub
 
-    Private Sub SetLocalErrorCode(eNewErrorCode As eFastaFileSplitterErrorCodes, leaveExistingErrorCodeUnchanged As Boolean)
+    Private Sub SetLocalErrorCode(eNewErrorCode As FastaFileSplitterErrorCode, leaveExistingErrorCodeUnchanged As Boolean)
 
-        If leaveExistingErrorCodeUnchanged AndAlso mLocalErrorCode <> eFastaFileSplitterErrorCodes.NoError Then
+        If leaveExistingErrorCodeUnchanged AndAlso mLocalErrorCode <> FastaFileSplitterErrorCode.NoError Then
             ' An error code is already defined; do not change it
         Else
             mLocalErrorCode = eNewErrorCode
 
-            If eNewErrorCode = eFastaFileSplitterErrorCodes.NoError Then
+            If eNewErrorCode = FastaFileSplitterErrorCode.NoError Then
                 If ErrorCode = ProcessFilesErrorCodes.LocalizedError Then
                     SetBaseClassErrorCode(ProcessFilesErrorCodes.NoError)
                 End If
