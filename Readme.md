@@ -13,24 +13,24 @@ Example:
 
 ## Syntax
 ```
-FastaFileSplitter.exe /I:SourceFastaFile [/O:OutputFolderPath]
+FastaFileSplitter.exe /I:SourceFastaFile [/O:OutputDirectoryPath]
  [/N:SplitCount] [/P:ParameterFilePath]
- [/S:[MaxLevel]] [/A:AlternateOutputFolderPath] [/R] [/L]
+ [/S:[MaxLevel]] [/A:AlternateOutputDirectoryPath] [/R] [/L]
 ```
 
 The input file path can contain the wildcard character * and should point to a
-fasta file. The output folder switch is optional.  If omitted, the output file
-will be created in the same folder as the input file.
+fasta file. The output directory switch is optional.  If omitted, the output file
+will be created in the same directory as the input file.
 
 Use /N to define the number of parts to split the input file into.
 
 The parameter file path is optional. If included, it should point to a valid XML
 parameter file.
 
-Use /S to process all valid files in the input folder and subfolders. Include a
-number after /S (like /S:2) to limit the level of subfolders to examine. When using /S, 
+Use /S to process all valid files in the input directory and subdirectories. Include a
+number after /S (like /S:2) to limit the level of subdirectories to examine. When using /S, 
 you can redirect the output of the results using /A. When using /S, you can use /R 
-to re-create the input folder hierarchy in the alternate output folder (if defined).
+to re-create the input directory hierarchy in the alternate output directory (if defined).
 
 Use /L to log messages to a file.
 
@@ -43,7 +43,7 @@ Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/
 ## License
 
 The FASTA File Splitter is licensed under the 2-Clause BSD License; 
-you may not use this file except in compliance with the License.  You may obtain 
+you may not use this program except in compliance with the License.  You may obtain 
 a copy of the License at https://opensource.org/licenses/BSD-2-Clause
 
 Copyright 2018 Battelle Memorial Institute

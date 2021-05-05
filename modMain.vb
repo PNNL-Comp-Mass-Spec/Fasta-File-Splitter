@@ -195,13 +195,13 @@ Module modMain
 
             Console.WriteLine("Program syntax:")
             Console.WriteLine(Path.GetFileName(FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath()) &
-                              " /I:SourceFastaFile [/O:OutputFolderPath]")
+                              " /I:SourceFastaFile [/O:OutputDirectoryPath]")
             Console.WriteLine(" [/N:SplitCount] [/P:ParameterFilePath] ")
-            Console.WriteLine(" [/S:[MaxLevel]] [/A:AlternateOutputFolderPath] [/R] [/L]")
+            Console.WriteLine(" [/S:[MaxLevel]] [/A:AlternateOutputDirectoryPath] [/R] [/L]")
             Console.WriteLine()
             Console.WriteLine(ConsoleMsgUtils.WrapParagraph(
                 "The input file path can contain the wildcard character * and should point to a fasta file. " &
-                "The output folder switch is optional.  If omitted, the output file will be created in the same folder as the input file."))
+                "The output directory switch is optional.  If omitted, the output file will be created in the same directory as the input file."))
             Console.WriteLine()
 
             Console.WriteLine("Use /N to define the number of parts to split the input file into.")
@@ -212,9 +212,9 @@ Module modMain
             Console.WriteLine()
 
             Console.WriteLine(ConsoleMsgUtils.WrapParagraph(
-                "Use /S to process all valid files in the input folder and subfolders. Include a number after /S (like /S:2) to limit the level of subfolders to examine. " &
+                "Use /S to process all valid files in the input directory and subdirectories. Include a number after /S (like /S:2) to limit the level of subdirectories to examine. " &
                 "When using /S, you can redirect the output of the results using /A. " &
-                "When using /S, you can use /R to re-create the input folder hierarchy in the alternate output folder (if defined)."))
+                "When using /S, you can use /R to re-create the input directory hierarchy in the alternate output directory (if defined)."))
 
             Console.WriteLine("Use /L to log messages to a file.")
             Console.WriteLine()
