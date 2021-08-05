@@ -165,7 +165,7 @@ namespace FastaFileSplitterLibrary
         /// </summary>
         public clsFastaFileSplitter(int splitCount = 5)
         {
-            mFileDate = "August 4, 2021";
+            mFileDate = "August 5, 2021";
 
             // Note: intentionally using a seed here
             mRandom = new Random(314159);
@@ -361,7 +361,7 @@ namespace FastaFileSplitterLibrary
                 if (!File.Exists(parameterFilePath))
                 {
                     // See if parameterFilePath points to a file in the same directory as the application
-                    parameterFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), Path.GetFileName(parameterFilePath));
+                    parameterFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, Path.GetFileName(parameterFilePath));
                     if (!File.Exists(parameterFilePath))
                     {
                         SetBaseClassErrorCode(ProcessFilesErrorCodes.ParameterFileNotFound);
