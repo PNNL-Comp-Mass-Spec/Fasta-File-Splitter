@@ -683,26 +683,26 @@ namespace FastaFileSplitterLibrary
             }
         }
 
-        private void SetLocalErrorCode(FastaFileSplitterErrorCode eNewErrorCode, bool leaveExistingErrorCodeUnchanged = false)
+        private void SetLocalErrorCode(FastaFileSplitterErrorCode newErrorCode, bool leaveExistingErrorCodeUnchanged = false)
         {
             if (leaveExistingErrorCodeUnchanged && mLocalErrorCode != FastaFileSplitterErrorCode.NoError)
             {
+                // An error code is already defined; do not change it
+                return;
             }
-            // An error code is already defined; do not change it
+
+            mLocalErrorCode = newErrorCode;
+
+            if (newErrorCode == FastaFileSplitterErrorCode.NoError)
+            {
+                if (ErrorCode == ProcessFilesErrorCodes.LocalizedError)
+                {
+                    SetBaseClassErrorCode(ProcessFilesErrorCodes.NoError);
+                }
+            }
             else
             {
-                mLocalErrorCode = eNewErrorCode;
-                if (eNewErrorCode == FastaFileSplitterErrorCode.NoError)
-                {
-                    if (ErrorCode == ProcessFilesErrorCodes.LocalizedError)
-                    {
-                        SetBaseClassErrorCode(ProcessFilesErrorCodes.NoError);
-                    }
-                }
-                else
-                {
-                    SetBaseClassErrorCode(ProcessFilesErrorCodes.LocalizedError);
-                }
+                SetBaseClassErrorCode(ProcessFilesErrorCodes.LocalizedError);
             }
         }
 

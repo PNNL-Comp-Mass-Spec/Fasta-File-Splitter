@@ -150,8 +150,8 @@ namespace FastaFileSplitter
         {
             // Returns True if no problems; otherwise, returns false
 
-            var value = string.Empty;
-            var validParameters = new List<string>() { "I", "N", "O", "P", "S", "A", "R", "L" };
+            var validParameters = new List<string> { "I", "N", "O", "P", "S", "A", "R", "L" };
+
             try
             {
                 // Make sure no invalid parameters are present
@@ -164,41 +164,45 @@ namespace FastaFileSplitter
 
 
                 // Query commandLineParser to see if various parameters are present
-                if (commandLineParser.RetrieveValueForParameter("I", out value))
+                if (commandLineParser.RetrieveValueForParameter("I", out var inputFilePath))
                 {
-                    mInputFilePath = value;
+                    mInputFilePath = inputFilePath;
                 }
                 else if (commandLineParser.NonSwitchParameterCount > 0)
                 {
                     mInputFilePath = commandLineParser.RetrieveNonSwitchParameter(0);
                 }
 
-                if (commandLineParser.RetrieveValueForParameter("N", out value))
+                if (commandLineParser.RetrieveValueForParameter("N", out var splitCount))
                 {
-                    if (!int.TryParse(value, out mSplitCount))
+                    if (!int.TryParse(splitCount, out mSplitCount))
                     {
                         ConsoleMsgUtils.ShowError("Error parsing number from the /N parameter; use /N:25 to specify the file be split into " + clsFastaFileSplitter.DEFAULT_SPLIT_COUNT + " parts");
                         mSplitCount = clsFastaFileSplitter.DEFAULT_SPLIT_COUNT;
                     }
                 }
 
-                if (commandLineParser.RetrieveValueForParameter("O", out value))
-                    mOutputDirectoryName = value;
-                if (commandLineParser.RetrieveValueForParameter("P", out value))
-                    mParameterFilePath = value;
-                if (commandLineParser.RetrieveValueForParameter("S", out value))
+                if (commandLineParser.RetrieveValueForParameter("O", out var outputDirectory))
+                    mOutputDirectoryName = outputDirectory;
+
+                if (commandLineParser.RetrieveValueForParameter("P", out var parameterFile))
+                    mParameterFilePath = parameterFile;
+
+                if (commandLineParser.RetrieveValueForParameter("S", out var recurseSubdirectories))
                 {
                     mRecurseDirectories = true;
-                    if (!int.TryParse(value, out mMaxLevelsToRecurse))
+                    if (!int.TryParse(recurseSubdirectories, out mMaxLevelsToRecurse))
                     {
                         mMaxLevelsToRecurse = 0;
                     }
                 }
 
-                if (commandLineParser.RetrieveValueForParameter("A", out value))
-                    mOutputDirectoryAlternatePath = value;
+                if (commandLineParser.RetrieveValueForParameter("A", out var alternateOutputDirectory))
+                    mOutputDirectoryAlternatePath = alternateOutputDirectory;
+
                 if (commandLineParser.IsParameterPresent("R"))
                     mRecreateDirectoryHierarchyInAlternatePath = true;
+
                 if (commandLineParser.IsParameterPresent("L"))
                     mLogMessagesToFile = true;
 
