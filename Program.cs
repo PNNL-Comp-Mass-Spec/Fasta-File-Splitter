@@ -6,6 +6,7 @@ using System.Threading;
 using FastaFileSplitterLibrary;
 using PRISM;
 using PRISM.FileProcessor;
+using PRISM.Logging;
 
 // This program can be used to split apart a protein FASTA file into a number of sections
 // Although the splitting is random, each section will have a nearly identical number of residues
@@ -103,7 +104,7 @@ namespace FastaFileSplitter
 
                 };
 
-                fastaFileSplitter.ProgressUpdate += mFastaFileSplitter_ProgressChanged;
+                RegisterEvents(fastaFileSplitter);
                 fastaFileSplitter.ProgressReset += mFastaFileSplitter_ProgressReset;
 
                 int returnCode;
@@ -248,6 +249,34 @@ namespace FastaFileSplitter
             {
                 Console.WriteLine("Error displaying the program syntax: " + ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Use this method to chain events between classes
+        /// </summary>
+        /// <param name="sourceClass"></param>
+        private static void RegisterEvents(IEventNotifier sourceClass)
+        {
+            // Ignore: sourceClass.DebugEvent += OnDebugEvent;
+            sourceClass.StatusEvent += OnStatusEvent;
+            sourceClass.ErrorEvent += OnErrorEvent;
+            sourceClass.WarningEvent += OnWarningEvent;
+            sourceClass.ProgressUpdate += mFastaFileSplitter_ProgressChanged;
+        }
+
+        private static void OnErrorEvent(string message, Exception ex)
+        {
+            ConsoleMsgUtils.ShowError(message, ex);
+        }
+
+        private static void OnStatusEvent(string message)
+        {
+            Console.WriteLine(message);
+        }
+
+        private static void OnWarningEvent(string message)
+        {
+            ConsoleMsgUtils.ShowWarning(message);
         }
 
         private static void mFastaFileSplitter_ProgressChanged(string taskDescription, float percentComplete)

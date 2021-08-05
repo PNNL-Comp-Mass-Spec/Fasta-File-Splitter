@@ -139,7 +139,7 @@ namespace FastaFileSplitterLibrary
             }
             catch (Exception ex)
             {
-                // Ignore errors here
+                OnWarningEvent("Error closing the output file: " + ex.Message);
             }
         }
 
@@ -180,7 +180,7 @@ namespace FastaFileSplitterLibrary
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error in StoreProtein: " + ex.Message);
+                OnErrorEvent("Error in StoreProtein", ex);
                 throw;
             }
         }

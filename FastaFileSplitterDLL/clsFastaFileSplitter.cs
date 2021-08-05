@@ -203,6 +203,7 @@ namespace FastaFileSplitterLibrary
                 {
                     var outputFilePath = outputFilePathBase + "_" + splitCount + "x_" + fileNum.ToString(formatCode) + ".fasta";
                     outputFiles[fileNum - 1] = new clsFastaOutputFile(outputFilePath);
+                    RegisterEvents(outputFiles[fileNum - 1]);
                 }
 
                 return true;
