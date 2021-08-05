@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using FastaFileSplitterLibrary;
 using PRISM;
-using PRISM.FileProcessor; // This program can be used to split apart a protein FASTA file into a number of sections
+using PRISM.FileProcessor;
+
+// This program can be used to split apart a protein FASTA file into a number of sections
 // Although the splitting is random, each section will have a nearly identical number of residues
 //
 // -------------------------------------------------------------------------------
@@ -21,9 +24,16 @@ using PRISM.FileProcessor; // This program can be used to split apart a protein 
 
 namespace FastaFileSplitter
 {
+    /// <summary>
+    /// FASTA file splitter program
+    /// </summary>
     static class Program
     {
+        /// <summary>
+        /// Program date
+        /// </summary>
         public const string PROGRAM_DATE = "August 5, 2021";
+
         private static string mInputFilePath;
         private static int mSplitCount;
         private static string mOutputDirectoryName;              // Optional
@@ -54,10 +64,12 @@ namespace FastaFileSplitter
             }
         }
 
+        /// <summary>
+        /// Main processing method
+        /// </summary>
+        /// <returns>0 if no error, error code if an error</returns>
         public static int Main()
         {
-            // Returns 0 if no error, error code if an error
-
             var commandLineParser = new clsParseCommandLine();
             bool proceed;
 

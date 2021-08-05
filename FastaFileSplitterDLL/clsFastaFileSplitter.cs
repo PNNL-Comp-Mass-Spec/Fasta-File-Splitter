@@ -4,34 +4,78 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using PRISM; // This class will read a protein FASTA file and split it apart into the specified number of sections
-// Although the splitting is random, each section will have a nearly identical number of residues
-//
-// Written by Matthew Monroe for the Department of Energy (PNNL, Richland, WA)
-//
-// Started April 1, 2010
+using PRISM;
+using PRISM.FileProcessor;
+using ProteinFileReader;
+
 
 namespace FastaFileSplitterLibrary
 {
-    public class clsFastaFileSplitter : PRISM.FileProcessor.ProcessFilesBase
+    /// <summary>
+    /// This class will read a protein FASTA file and split it apart into the specified number of sections
+    /// Although the splitting is random, each section will have a nearly identical number of residues
+    /// </summary>
+    /// <remarks>
+    /// Written by Matthew Monroe for the Department of Energy (PNNL, Richland, WA)
+    /// Started April 1, 2010
+    /// </remarks>
+    public class clsFastaFileSplitter : ProcessFilesBase
     {
+        /// <summary>
+        /// XML section name in the parameter file
+        /// </summary>
         public const string XML_SECTION_OPTIONS = "FastaFileSplitterOptions";
+
+        /// <summary>
+        /// Default number of files to create
+        /// </summary>
         public const int DEFAULT_SPLIT_COUNT = 10;
 
-        // Error codes specialized for this class
+        /// <summary>
+        /// Error codes specific to this class
+        /// </summary>
         public enum FastaFileSplitterErrorCode
         {
+            /// <summary>
+            /// No error
+            /// </summary>
             NoError = 0,
+
+            /// <summary>
+            /// Error reading the input file
+            /// </summary>
             ErrorReadingInputFile = 1,
+
+            /// <summary>
+            /// Error writing the output file
+            /// </summary>
             ErrorWritingOutputFile = 2,
             InvalidMotif = 4,
+
+            /// <summary>
+            /// Unspecified error
+            /// </summary>
             UnspecifiedError = -1
         }
 
+        /// <summary>
+        /// Path and stats for a given FASTA file
+        /// </summary>
         public struct FastaFileInfoType
         {
+            /// <summary>
+            /// FASTA File Path
+            /// </summary>
             public string FilePath;
+
+            /// <summary>
+            /// Number of proteins in the file
+            /// </summary>
             public int NumProteins;
+
+            /// <summary>
+            /// Number of residues in the file
+            /// </summary>
             public long NumResidues;
         }
 
@@ -45,6 +89,9 @@ namespace FastaFileSplitterLibrary
         public FastaFileOptionsClass FastaFileOptions;
         private FastaFileSplitterErrorCode mLocalErrorCode;
 
+        /// <summary>
+        /// Number of proteins read from the input file
+        /// </summary>
         public int InputFileProteinsProcessed
         {
             get
@@ -53,6 +100,9 @@ namespace FastaFileSplitterLibrary
             }
         }
 
+        /// <summary>
+        /// Number of lines read from the input file
+        /// </summary>
         public int InputFileLinesRead
         {
             get
@@ -61,6 +111,9 @@ namespace FastaFileSplitterLibrary
             }
         }
 
+        /// <summary>
+        /// Number of lines skipped due to having an invalid format
+        /// </summary>
         public int InputFileLineSkipCount
         {
             get
@@ -69,6 +122,9 @@ namespace FastaFileSplitterLibrary
             }
         }
 
+        /// <summary>
+        /// Local error code
+        /// </summary>
         public FastaFileSplitterErrorCode LocalErrorCode
         {
             get
@@ -77,6 +133,9 @@ namespace FastaFileSplitterLibrary
             }
         }
 
+        /// <summary>
+        /// Number of parts to split the input FASTA file into
+        /// </summary>
         public int FastaFileSplitCount
         {
             get
@@ -92,6 +151,9 @@ namespace FastaFileSplitterLibrary
             }
         }
 
+        /// <summary>
+        /// Information on each output file
+        /// </summary>
         public List<FastaFileInfoType> SplitFastaFileInfo
         {
             get
@@ -115,6 +177,13 @@ namespace FastaFileSplitterLibrary
         }
 
         private bool CreateOutputFiles(int splitCount, string outputFilePathBase, ref clsFastaOutputFile[] outputFiles)
+        /// <summary>
+        /// Create the output files
+        /// </summary>
+        /// <param name="splitCount"></param>
+        /// <param name="outputFilePathBase"></param>
+        /// <param name="outputFiles">Output: zero-based array that tracks the output file handles, along with the number of residues written to each file</param>
+        /// <returns></returns>
         {
             var fileNum = 0;
             try
@@ -146,6 +215,9 @@ namespace FastaFileSplitterLibrary
             }
         }
 
+        /// <summary>
+        /// Default extensions to parse
+        /// </summary>
         public override IList<string> GetDefaultExtensionsToParse()
         {
             var extensionsToParse = new List<string>() { ".fasta", ".faa" };
@@ -284,7 +356,6 @@ namespace FastaFileSplitterLibrary
         /// Examines the file's extension and true if it ends in .fasta or .faa
         /// </summary>
         /// <param name="filePath"></param>
-        /// <returns></returns>
         public static bool IsFastaFile(string filePath)
         {
             var fileExtension = Path.GetExtension(filePath);
@@ -298,6 +369,10 @@ namespace FastaFileSplitterLibrary
             }
         }
 
+        /// <summary>
+        /// Read settings from a parameter file
+        /// </summary>
+        /// <param name="parameterFilePath"></param>
         public bool LoadParameterFileSettings(string parameterFilePath)
         {
             var settingsFile = new XmlSettingsFileAccessor();
@@ -409,6 +484,13 @@ namespace FastaFileSplitterLibrary
             }
         }
 
+        /// <summary>
+        /// Split the FASTA file into the given number of files
+        /// </summary>
+        /// <param name="inputFastaFilePath"></param>
+        /// <param name="outputDirectoryPath"></param>
+        /// <param name="splitCount"></param>
+        /// <returns></returns>
         public bool SplitFastaFile(string inputFastaFilePath, string outputDirectoryPath, int splitCount)
         {
             return SplitFastaFile(inputFastaFilePath, outputDirectoryPath, string.Empty, splitCount);
@@ -422,7 +504,7 @@ namespace FastaFileSplitterLibrary
         /// <param name="outputDirectoryPath"></param>
         /// <param name="outputFileNameBaseOverride">When defined, use this name for the protein output filename rather than auto-defining the name</param>
         /// <param name="splitCount"></param>
-        /// <returns></returns>
+        /// <returns>True if success, false if an error</returns>
         /// <remarks></remarks>
         public bool SplitFastaFile(string inputFastaFilePath, string outputDirectoryPath, string outputFileNameBaseOverride, int splitCount)
         {

@@ -1,15 +1,31 @@
 ﻿using System;
 using System.IO;
+using PRISM;
 
 namespace FastaFileSplitterLibrary
 {
-    public class clsFastaOutputFile
+    /// <summary>
+    /// This class is used to create the split FASTA files
+    /// </summary>
+    public class clsFastaOutputFile : EventNotifier
     {
+        /// <summary>
+        /// Protein line start character
+        /// </summary>
         public const char DEFAULT_PROTEIN_LINE_START_CHAR = '>';
+
+        /// <summary>
+        /// Protein name / description separator character
+        /// </summary>
         public const char DEFAULT_PROTEIN_LINE_ACCESSION_END_CHAR = ' ';
+
+        /// <summary>
+        /// Number of residues per line for the protein sequence
+        /// </summary>
         public const int DEFAULT_RESIDUES_PER_LINE = 60;
 
         protected bool mOutputFileIsOpen;
+
         protected string mOutputFilePath;
         protected StreamWriter mOutputFile;
         protected string mProteinLineStartChar;
@@ -18,6 +34,9 @@ namespace FastaFileSplitterLibrary
         protected int mTotalProteinsInFile;
         protected long mTotalResiduesInFile;
 
+        /// <summary>
+        /// True if the output file is open for writing
+        /// </summary>
         public bool OutputFileIsOpen
         {
             get
@@ -26,6 +45,9 @@ namespace FastaFileSplitterLibrary
             }
         }
 
+        /// <summary>
+        /// Output file path
+        /// </summary>
         public string OutputFilePath
         {
             get
@@ -34,6 +56,9 @@ namespace FastaFileSplitterLibrary
             }
         }
 
+        /// <summary>
+        /// Residues per line to write to the output file
+        /// </summary>
         public int ResiduesPerLine
         {
             get
@@ -49,6 +74,9 @@ namespace FastaFileSplitterLibrary
             }
         }
 
+        /// <summary>
+        /// Total proteins in the file
+        /// </summary>
         public int TotalProteinsInFile
         {
             get
@@ -57,6 +85,9 @@ namespace FastaFileSplitterLibrary
             }
         }
 
+        /// <summary>
+        /// Total residues in the file
+        /// </summary>
         public long TotalResiduesInFile
         {
             get
@@ -70,6 +101,12 @@ namespace FastaFileSplitterLibrary
         }
 
         public clsFastaOutputFile(string outputFilePath, char proteinLineStartChar, char proteinLineAccessionEndChar)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="outputFilePath"></param>
+        /// <param name="proteinLineStartChar"></param>
+        /// <param name="proteinLineAccessionEndChar"></param>
         {
             if (outputFilePath is null || outputFilePath.Length == 0)
             {
@@ -86,6 +123,9 @@ namespace FastaFileSplitterLibrary
             mTotalResiduesInFile = 0L;
         }
 
+        /// <summary>
+        /// Close the output file
+        /// </summary>
         public void CloseFile()
         {
             try
@@ -102,6 +142,12 @@ namespace FastaFileSplitterLibrary
             }
         }
 
+        /// <summary>
+        /// Append a protein to the output file
+        /// </summary>
+        /// <param name="proteinName"></param>
+        /// <param name="description"></param>
+        /// <param name="sequence"></param>
         public void StoreProtein(string proteinName, string description, string sequence)
         {
             if (mOutputFileIsOpen)
