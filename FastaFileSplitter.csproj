@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CA75C5F5-D96B-45A0-A300-EF2704D5AD99}</ProjectGuid>
+    <ProjectGuid>{7851449E-1533-0A51-2158-255966429939}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <StartupObject>FastaFileSplitter.modMain</StartupObject>
+    <StartupObject>FastaFileSplitter.Program</StartupObject>
     <RootNamespace>FastaFileSplitter</RootNamespace>
     <AssemblyName>FastaFileSplitter</AssemblyName>
     <FileAlignment>512</FileAlignment>
@@ -17,7 +17,6 @@
     <OptionCompare>Binary</OptionCompare>
     <OptionStrict>Off</OptionStrict>
     <OptionInfer>On</OptionInfer>
-    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -38,6 +37,8 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(ProjectDir)**\*.vb</DefaultItemExcludes>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,17 +46,18 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\</OutputPath>
-    <DocumentationFile>FastaFileSplitter.xml</DocumentationFile>
+    <DocumentationFile>bin\FastaFileSplitter.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DocumentationFile>FastaFileSplitter.xml</DocumentationFile>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>bin\Release\FastaFileSplitter.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
   </PropertyGroup>
   <ItemGroup>
@@ -65,7 +67,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Import Include="Microsoft.VisualBasic" />
     <Import Include="System" />
     <Import Include="System.Collections" />
     <Import Include="System.Collections.Generic" />
@@ -74,8 +75,8 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="modMain.vb" />
-    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="PRISM-Library">
@@ -87,7 +88,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="My Project\app.manifest" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -107,12 +107,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="FastaFileSplitterDLL\FastaFileSplitterDLL.vbproj">
-      <Project>{4353C8A1-A82D-40B4-A08C-E73B54D31346}</Project>
+    <ProjectReference Include="FastaFileSplitterDLL\FastaFileSplitterDLL.csproj">
+      <Project>{F17749CA-6475-0F45-22D4-2D45364427E6}</Project>
       <Name>FastaFileSplitterDLL</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

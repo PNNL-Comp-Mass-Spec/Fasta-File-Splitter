@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "FastaFileSplitter", "FastaFileSplitter.vbproj", "{CA75C5F5-D96B-45A0-A300-EF2704D5AD99}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastaFileSplitter", "FastaFileSplitter.csproj", "{7851449E-1533-0A51-2158-255966429939}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "FastaFileSplitterDLL", "FastaFileSplitterDLL\FastaFileSplitterDLL.vbproj", "{4353C8A1-A82D-40B4-A08C-E73B54D31346}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastaFileSplitterDLL", "FastaFileSplitterDLL\FastaFileSplitterDLL.csproj", "{F17749CA-6475-0F45-22D4-2D45364427E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,14 +11,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CA75C5F5-D96B-45A0-A300-EF2704D5AD99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA75C5F5-D96B-45A0-A300-EF2704D5AD99}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA75C5F5-D96B-45A0-A300-EF2704D5AD99}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA75C5F5-D96B-45A0-A300-EF2704D5AD99}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4353C8A1-A82D-40B4-A08C-E73B54D31346}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4353C8A1-A82D-40B4-A08C-E73B54D31346}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4353C8A1-A82D-40B4-A08C-E73B54D31346}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4353C8A1-A82D-40B4-A08C-E73B54D31346}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7851449E-1533-0A51-2158-255966429939}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7851449E-1533-0A51-2158-255966429939}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7851449E-1533-0A51-2158-255966429939}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7851449E-1533-0A51-2158-255966429939}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F17749CA-6475-0F45-22D4-2D45364427E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F17749CA-6475-0F45-22D4-2D45364427E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F17749CA-6475-0F45-22D4-2D45364427E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F17749CA-6475-0F45-22D4-2D45364427E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

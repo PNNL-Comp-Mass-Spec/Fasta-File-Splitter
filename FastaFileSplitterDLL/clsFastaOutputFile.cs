@@ -1,130 +1,149 @@
-﻿Option Strict On
+﻿using System;
+using System.IO;
 
-Imports System.IO
+namespace FastaFileSplitterLibrary
+{
+    public class clsFastaOutputFile
+    {
 
-Public Class clsFastaOutputFile
+        #region Constants and Enums
+        public const char DEFAULT_PROTEIN_LINE_START_CHAR = '>';
+        public const char DEFAULT_PROTEIN_LINE_ACCESSION_END_CHAR = ' ';
+        public const int DEFAULT_RESIDUES_PER_LINE = 60;
+        #endregion
 
-#Region "Constants and Enums"
-    Public Const DEFAULT_PROTEIN_LINE_START_CHAR As Char = ">"c
-    Public Const DEFAULT_PROTEIN_LINE_ACCESSION_END_CHAR As Char = " "c
-    Public Const DEFAULT_RESIDUES_PER_LINE As Integer = 60
-#End Region
+        #region Class wide Variables
 
-#Region "Class wide Variables"
+        protected bool mOutputFileIsOpen;
+        protected string mOutputFilePath;
+        protected StreamWriter mOutputFile;
+        protected string mProteinLineStartChar;
+        protected string mProteinLineAccessionEndChar;
+        protected int mResiduesPerLine;
+        protected int mTotalProteinsInFile;
+        protected long mTotalResiduesInFile;
 
-    Protected mOutputFileIsOpen As Boolean
-    Protected mOutputFilePath As String
-    Protected mOutputFile As StreamWriter
+        #endregion
 
-    Protected mProteinLineStartChar As String
-    Protected mProteinLineAccessionEndChar As String
+        #region Properties
 
-    Protected mResiduesPerLine As Integer
+        public bool OutputFileIsOpen
+        {
+            get
+            {
+                return mOutputFileIsOpen;
+            }
+        }
 
-    Protected mTotalProteinsInFile As Integer
-    Protected mTotalResiduesInFile As Int64
+        public string OutputFilePath
+        {
+            get
+            {
+                return mOutputFilePath;
+            }
+        }
 
-#End Region
+        public int ResiduesPerLine
+        {
+            get
+            {
+                return mResiduesPerLine;
+            }
 
-#Region "Properties"
+            set
+            {
+                if (value < 1)
+                    value = 1;
+                mResiduesPerLine = value;
+            }
+        }
 
-    Public ReadOnly Property OutputFileIsOpen As Boolean
-        Get
-            Return mOutputFileIsOpen
-        End Get
-    End Property
+        public int TotalProteinsInFile
+        {
+            get
+            {
+                return mTotalProteinsInFile;
+            }
+        }
 
-    Public ReadOnly Property OutputFilePath As String
-        Get
-            Return mOutputFilePath
-        End Get
-    End Property
+        public long TotalResiduesInFile
+        {
+            get
+            {
+                return mTotalResiduesInFile;
+            }
+        }
+        #endregion
 
-    Public Property ResiduesPerLine As Integer
-        Get
-            Return mResiduesPerLine
-        End Get
-        Set
-            If Value < 1 Then Value = 1
-            mResiduesPerLine = Value
-        End Set
-    End Property
+        public clsFastaOutputFile(string outputFilePath) : this(outputFilePath, DEFAULT_PROTEIN_LINE_START_CHAR, DEFAULT_PROTEIN_LINE_ACCESSION_END_CHAR)
+        {
+        }
 
-    Public ReadOnly Property TotalProteinsInFile As Integer
-        Get
-            Return mTotalProteinsInFile
-        End Get
-    End Property
+        public clsFastaOutputFile(string outputFilePath, char proteinLineStartChar, char proteinLineAccessionEndChar)
+        {
+            if (outputFilePath is null || outputFilePath.Length == 0)
+            {
+                throw new Exception("OutputFilePath is empty; cannot instantiate class");
+            }
 
-    Public ReadOnly Property TotalResiduesInFile As Int64
-        Get
-            Return mTotalResiduesInFile
-        End Get
-    End Property
-#End Region
+            mOutputFilePath = outputFilePath;
+            mOutputFile = new StreamWriter(new FileStream(outputFilePath, FileMode.Create, FileAccess.Write, FileShare.Read));
+            mOutputFileIsOpen = true;
+            mProteinLineStartChar = proteinLineStartChar.ToString();
+            mProteinLineAccessionEndChar = proteinLineAccessionEndChar.ToString();
+            mResiduesPerLine = DEFAULT_RESIDUES_PER_LINE;
+            mTotalProteinsInFile = 0;
+            mTotalResiduesInFile = 0L;
+        }
 
-    Public Sub New(outputFilePath As String)
-        Me.New(outputFilePath, DEFAULT_PROTEIN_LINE_START_CHAR, DEFAULT_PROTEIN_LINE_ACCESSION_END_CHAR)
-    End Sub
+        public void CloseFile()
+        {
+            try
+            {
+                if (mOutputFileIsOpen && mOutputFile is object)
+                {
+                    mOutputFile.Close();
+                    mOutputFileIsOpen = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Ignore errors here
+            }
+        }
 
-    Public Sub New(outputFilePath As String, proteinLineStartChar As Char, proteinLineAccessionEndChar As Char)
-        If outputFilePath Is Nothing OrElse outputFilePath.Length = 0 Then
-            Throw New Exception("OutputFilePath is empty; cannot instantiate class")
-        End If
-        mOutputFilePath = outputFilePath
+        public void StoreProtein(string proteinName, string description, string sequence)
+        {
+            if (mOutputFileIsOpen)
+            {
+                try
+                {
+                    // Write out the protein header and description line
+                    mOutputFile.WriteLine(mProteinLineStartChar + proteinName + mProteinLineAccessionEndChar + description);
 
-        mOutputFile = New StreamWriter(New FileStream(outputFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
-        mOutputFileIsOpen = True
+                    // Now write out the residues, storing mResiduesPerLine residues per line
+                    int startIndex = 0;
+                    while (startIndex < sequence.Length)
+                    {
+                        int charCount = mResiduesPerLine;
+                        if (startIndex + charCount > sequence.Length)
+                        {
+                            charCount = sequence.Length - startIndex;
+                        }
 
-        mProteinLineStartChar = proteinLineStartChar
-        mProteinLineAccessionEndChar = proteinLineAccessionEndChar
+                        mOutputFile.WriteLine(sequence.Substring(startIndex, charCount));
+                        startIndex += charCount;
+                    }
 
-        mResiduesPerLine = DEFAULT_RESIDUES_PER_LINE
-
-        mTotalProteinsInFile = 0
-        mTotalResiduesInFile = 0
-    End Sub
-
-    Public Sub CloseFile()
-        Try
-            If mOutputFileIsOpen AndAlso mOutputFile IsNot Nothing Then
-                mOutputFile.Close()
-                mOutputFileIsOpen = False
-            End If
-        Catch ex As Exception
-            ' Ignore errors here
-        End Try
-    End Sub
-
-    Public Sub StoreProtein(proteinName As String, ByRef description As String, ByRef sequence As String)
-
-        If mOutputFileIsOpen Then
-
-            Try
-                ' Write out the protein header and description line
-                mOutputFile.WriteLine(mProteinLineStartChar & proteinName & mProteinLineAccessionEndChar & description)
-
-                ' Now write out the residues, storing mResiduesPerLine residues per line
-                Dim startIndex = 0
-                Do While startIndex < sequence.Length
-                    Dim charCount = mResiduesPerLine
-                    If startIndex + charCount > sequence.Length Then
-                        charCount = sequence.Length - startIndex
-                    End If
-                    mOutputFile.WriteLine(sequence.Substring(startIndex, charCount))
-                    startIndex += charCount
-                Loop
-
-                mTotalProteinsInFile += 1
-                mTotalResiduesInFile += sequence.Length
-
-            Catch ex As Exception
-                Console.WriteLine("Error in StoreProtein: " & ex.Message)
-                Throw
-            End Try
-
-        End If
-
-    End Sub
-
-End Class
+                    mTotalProteinsInFile += 1;
+                    mTotalResiduesInFile += sequence.Length;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error in StoreProtein: " + ex.Message);
+                    throw;
+                }
+            }
+        }
+    }
+}

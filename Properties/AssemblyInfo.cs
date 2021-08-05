@@ -1,34 +1,33 @@
-﻿Imports System
-Imports System.Reflection
-Imports System.Runtime.InteropServices
+﻿using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
-' General Information about an assembly is controlled through the following 
-' set of attributes. Change these attribute values to modify the information
-' associated with an assembly.
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
 
-' Review the values of the assembly attributes
+// Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("FastaFileSplitter")> 
-<Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("PNNL")> 
-<Assembly: AssemblyProduct("FastaFileSplitter")> 
-<Assembly: AssemblyCopyright("Copyright © PNNL 2010")> 
-<Assembly: AssemblyTrademark("")> 
+[assembly: AssemblyTitle("FastaFileSplitter")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyCompany("PNNL")]
+[assembly: AssemblyProduct("FastaFileSplitter")]
+[assembly: AssemblyCopyright("Copyright © PNNL 2010")]
+[assembly: AssemblyTrademark("")]
+[assembly: ComVisible(false)]
 
-<Assembly: ComVisible(False)>
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid("26c30a63-07e6-49df-8934-3bacc0b64aa5")]
 
-'The following GUID is for the ID of the typelib if this project is exposed to COM
-<Assembly: Guid("26c30a63-07e6-49df-8934-3bacc0b64aa5")> 
+// Version information for an assembly consists of the following four values:
+// 
+// Major Version
+// Minor Version 
+// Build Number
+// Revision
+// 
+// You can specify all the values or you can default the Build and Revision Numbers 
+// by using the '*' as shown below:
+// <Assembly: AssemblyVersion("1.0.*")> 
 
-' Version information for an assembly consists of the following four values:
-'
-'      Major Version
-'      Minor Version 
-'      Build Number
-'      Revision
-'
-' You can specify all the values or you can default the Build and Revision Numbers 
-' by using the '*' as shown below:
-' <Assembly: AssemblyVersion("1.0.*")> 
-
-<Assembly: AssemblyVersion("1.0.*")> 
+[assembly: AssemblyVersion("1.0.*")]
