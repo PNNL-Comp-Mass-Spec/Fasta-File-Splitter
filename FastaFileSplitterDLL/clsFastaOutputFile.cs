@@ -24,9 +24,6 @@ namespace FastaFileSplitterLibrary
         /// </summary>
         public const int DEFAULT_RESIDUES_PER_LINE = 60;
 
-        protected bool mOutputFileIsOpen;
-
-        protected string mOutputFilePath;
         protected StreamWriter mOutputFile;
         protected string mProteinLineStartChar;
         protected string mProteinLineAccessionEndChar;
@@ -37,34 +34,19 @@ namespace FastaFileSplitterLibrary
         /// <summary>
         /// True if the output file is open for writing
         /// </summary>
-        public bool OutputFileIsOpen
-        {
-            get
-            {
-                return mOutputFileIsOpen;
-            }
-        }
+        public bool OutputFileIsOpen { get; private set; }
 
         /// <summary>
         /// Output file path
         /// </summary>
-        public string OutputFilePath
-        {
-            get
-            {
-                return mOutputFilePath;
-            }
-        }
+        public string OutputFilePath { get; }
 
         /// <summary>
         /// Residues per line to write to the output file
         /// </summary>
         public int ResiduesPerLine
         {
-            get
-            {
-                return mResiduesPerLine;
-            }
+            get => mResiduesPerLine;
 
             set
             {
@@ -77,24 +59,12 @@ namespace FastaFileSplitterLibrary
         /// <summary>
         /// Total proteins in the file
         /// </summary>
-        public int TotalProteinsInFile
-        {
-            get
-            {
-                return mTotalProteinsInFile;
-            }
-        }
+        public int TotalProteinsInFile => mTotalProteinsInFile;
 
         /// <summary>
         /// Total residues in the file
         /// </summary>
-        public long TotalResiduesInFile
-        {
-            get
-            {
-                return mTotalResiduesInFile;
-            }
-        }
+        public long TotalResiduesInFile => mTotalResiduesInFile;
 
         /// <summary>
         /// Constructor
@@ -112,11 +82,11 @@ namespace FastaFileSplitterLibrary
                 throw new Exception("OutputFilePath is empty; cannot instantiate class");
             }
 
-            mOutputFilePath = outputFilePath;
+            OutputFilePath = outputFilePath;
 
             mOutputFile = new StreamWriter(new FileStream(outputFilePath, FileMode.Create, FileAccess.Write, FileShare.Read));
 
-            mOutputFileIsOpen = true;
+            OutputFileIsOpen = true;
 
             mProteinLineStartChar = proteinLineStartChar.ToString();
             mProteinLineAccessionEndChar = proteinLineAccessionEndChar.ToString();
@@ -134,13 +104,13 @@ namespace FastaFileSplitterLibrary
         {
             try
             {
-                if (!mOutputFileIsOpen)
+                if (!OutputFileIsOpen)
                 {
                     return;
                 }
 
                 mOutputFile.Close();
-                mOutputFileIsOpen = false;
+                OutputFileIsOpen = false;
             }
             catch (Exception ex)
             {
@@ -156,7 +126,7 @@ namespace FastaFileSplitterLibrary
         /// <param name="sequence"></param>
         public void StoreProtein(string proteinName, string description, string sequence)
         {
-            if (!mOutputFileIsOpen)
+            if (!OutputFileIsOpen)
             {
                 return;
             }

@@ -78,68 +78,34 @@ namespace FastaFileSplitterLibrary
         }
 
         private int mSplitCount;
-        private int mInputFileProteinsProcessed;
-        private int mInputFileLinesRead;
-        private int mInputFileLineSkipCount;
         private readonly Random mRandom;
-
-        private List<FastaFileInfoType> mSplitFastaFileInfo;
-
-        private FastaFileSplitterErrorCode mLocalErrorCode;
 
         /// <summary>
         /// Number of proteins read from the input file
         /// </summary>
-        public int InputFileProteinsProcessed
-        {
-            get
-            {
-                return mInputFileProteinsProcessed;
-            }
-        }
+        public int InputFileProteinsProcessed { get; private set; }
 
         /// <summary>
         /// Number of lines read from the input file
         /// </summary>
-        public int InputFileLinesRead
-        {
-            get
-            {
-                return mInputFileLinesRead;
-            }
-        }
+        public int InputFileLinesRead { get; private set; }
 
         /// <summary>
         /// Number of lines skipped due to having an invalid format
         /// </summary>
-        public int InputFileLineSkipCount
-        {
-            get
-            {
-                return mInputFileLineSkipCount;
-            }
-        }
+        public int InputFileLineSkipCount { get; private set; }
 
         /// <summary>
         /// Local error code
         /// </summary>
-        public FastaFileSplitterErrorCode LocalErrorCode
-        {
-            get
-            {
-                return mLocalErrorCode;
-            }
-        }
+        public FastaFileSplitterErrorCode LocalErrorCode { get; private set; }
 
         /// <summary>
         /// Number of parts to split the input FASTA file into
         /// </summary>
         public int FastaFileSplitCount
         {
-            get
-            {
-                return mSplitCount;
-            }
+            get => mSplitCount;
 
             private set
             {
@@ -152,13 +118,7 @@ namespace FastaFileSplitterLibrary
         /// <summary>
         /// Information on each output file
         /// </summary>
-        public List<FastaFileInfoType> SplitFastaFileInfo
-        {
-            get
-            {
-                return mSplitFastaFileInfo;
-            }
-        }
+        public List<FastaFileInfoType> SplitFastaFileInfo { get; private set; }
 
         /// <summary>
         /// Constructor
@@ -232,7 +192,7 @@ namespace FastaFileSplitterLibrary
             string errorMessage;
             if (ErrorCode == ProcessFilesErrorCodes.LocalizedError | ErrorCode == ProcessFilesErrorCodes.NoError)
             {
-                errorMessage = mLocalErrorCode switch
+                errorMessage = LocalErrorCode switch
                 {
                     FastaFileSplitterErrorCode.NoError => "",
                     FastaFileSplitterErrorCode.ErrorReadingInputFile => "Error reading input file",
@@ -319,13 +279,12 @@ namespace FastaFileSplitterLibrary
 
         private void InitializeLocalVariables()
         {
-            mLocalErrorCode = FastaFileSplitterErrorCode.NoError;
+            LocalErrorCode = FastaFileSplitterErrorCode.NoError;
             FastaFileSplitCount = DEFAULT_SPLIT_COUNT;
-            mInputFileProteinsProcessed = 0;
-            mInputFileLinesRead = 0;
-            mInputFileLineSkipCount = 0;
-            mSplitFastaFileInfo = new List<FastaFileInfoType>();
-        }
+            InputFileProteinsProcessed = 0;
+            InputFileLinesRead = 0;
+            InputFileLineSkipCount = 0;
+            SplitFastaFileInfo = new List<FastaFileInfoType>();
         }
 
         /// <summary>
@@ -474,7 +433,7 @@ namespace FastaFileSplitterLibrary
         {
             try
             {
-                mSplitFastaFileInfo.Clear();
+                SplitFastaFileInfo.Clear();
 
                 // Open the input file and define the output file path
                 var openSuccess = OpenInputFile(
@@ -507,20 +466,20 @@ namespace FastaFileSplitterLibrary
                 UpdateProgress("Splitting FASTA file: " + Path.GetFileName(inputFastaFilePath), 0f);
 
                 // Read each protein in the input file and process appropriately
-                mInputFileProteinsProcessed = 0;
-                mInputFileLineSkipCount = 0;
-                mInputFileLinesRead = 0;
+                InputFileProteinsProcessed = 0;
+                InputFileLineSkipCount = 0;
+                InputFileLinesRead = 0;
                 bool inputProteinFound;
 
                 do
                 {
                     inputProteinFound = fastaFileReader.ReadNextProteinEntry();
-                    mInputFileLineSkipCount += fastaFileReader.LineSkipCount;
+                    InputFileLineSkipCount += fastaFileReader.LineSkipCount;
 
                     if (inputProteinFound)
                     {
-                        mInputFileProteinsProcessed++;
-                        mInputFileLinesRead = fastaFileReader.LinesRead;
+                        InputFileProteinsProcessed++;
+                        InputFileLinesRead = fastaFileReader.LinesRead;
 
                         var outputFileIndex = GetTargetFileNum(splitCount, ref outputFiles) - 1;
 
@@ -556,12 +515,12 @@ namespace FastaFileSplitterLibrary
                         NumResidues = outputFiles[index].TotalResiduesInFile
                     };
 
-                    mSplitFastaFileInfo.Add(udtFileInfo);
+                    SplitFastaFileInfo.Add(udtFileInfo);
                 }
 
                 // Create the stats file
                 WriteStatsFile(outputFilePathBase + "_SplitStats.txt", splitCount, ref outputFiles);
-                UpdateProgress("Done: Processed " + mInputFileProteinsProcessed.ToString("###,##0") + " proteins (" + mInputFileLinesRead.ToString("###,###,##0") + " lines)", 100f);
+                UpdateProgress("Done: Processed " + InputFileProteinsProcessed.ToString("###,##0") + " proteins (" + InputFileLinesRead.ToString("###,###,##0") + " lines)", 100f);
                 return true;
             }
             catch (Exception ex)
@@ -652,13 +611,13 @@ namespace FastaFileSplitterLibrary
 
         private void SetLocalErrorCode(FastaFileSplitterErrorCode newErrorCode, bool leaveExistingErrorCodeUnchanged = false)
         {
-            if (leaveExistingErrorCodeUnchanged && mLocalErrorCode != FastaFileSplitterErrorCode.NoError)
+            if (leaveExistingErrorCodeUnchanged && LocalErrorCode != FastaFileSplitterErrorCode.NoError)
             {
                 // An error code is already defined; do not change it
                 return;
             }
 
-            mLocalErrorCode = newErrorCode;
+            LocalErrorCode = newErrorCode;
 
             if (newErrorCode == FastaFileSplitterErrorCode.NoError)
             {
