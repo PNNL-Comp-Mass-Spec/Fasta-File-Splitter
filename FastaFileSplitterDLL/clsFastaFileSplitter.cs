@@ -504,19 +504,17 @@ namespace FastaFileSplitterLibrary
         /// <remarks></remarks>
         public bool SplitFastaFile(string inputFastaFilePath, string outputDirectoryPath, string outputFileNameBaseOverride, int splitCount)
         {
-            ProteinFileReader.FastaFileReader fastaFileReader = null;
-
-            // The following is a zero-based array that tracks the output file handles, along with the number of residues written to each file
-            clsFastaOutputFile[] outputFiles = null;
-            var outputFilePathBase = string.Empty;
-            bool inputProteinFound;
-            int outputFileIndex;
             try
             {
                 mSplitFastaFileInfo.Clear();
 
                 // Open the input file and define the output file path
-                var openSuccess = OpenInputFile(inputFastaFilePath, outputDirectoryPath, outputFileNameBaseOverride, out fastaFileReader, out outputFilePathBase);
+                var openSuccess = OpenInputFile(
+                    inputFastaFilePath,
+                    outputDirectoryPath,
+                    outputFileNameBaseOverride,
+                    out var fastaFileReader,
+                    out var outputFilePathBase);
 
                 // Abort processing if we couldn't successfully open the input file
                 if (!openSuccess)
