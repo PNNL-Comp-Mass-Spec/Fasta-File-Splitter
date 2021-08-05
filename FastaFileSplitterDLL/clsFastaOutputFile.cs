@@ -107,7 +107,7 @@ namespace FastaFileSplitterLibrary
             char proteinLineStartChar = DEFAULT_PROTEIN_LINE_START_CHAR,
             char proteinLineAccessionEndChar = DEFAULT_PROTEIN_LINE_ACCESSION_END_CHAR)
         {
-            if (outputFilePath is null || outputFilePath.Length == 0)
+            if (string.IsNullOrWhiteSpace(outputFilePath))
             {
                 throw new Exception("OutputFilePath is empty; cannot instantiate class");
             }

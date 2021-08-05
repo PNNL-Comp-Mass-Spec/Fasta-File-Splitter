@@ -352,7 +352,7 @@ namespace FastaFileSplitterLibrary
             var settingsFile = new XmlSettingsFileAccessor();
             try
             {
-                if (parameterFilePath is null || parameterFilePath.Length == 0)
+                if (string.IsNullOrWhiteSpace(parameterFilePath))
                 {
                     // No parameter file specified; nothing to load
                     return true;
@@ -436,12 +436,19 @@ namespace FastaFileSplitterLibrary
                     outputFileNameBase = Path.GetFileNameWithoutExtension(inputFilePath);
                 }
 
-                if (outputDirectoryPath is null || outputDirectoryPath.Length == 0)
+                if (string.IsNullOrWhiteSpace(outputDirectoryPath))
                 {
                     // This code likely won't be reached since CleanupFilePaths() should have already initialized outputDirectoryPath
-                    FileInfo inputFile;
-                    inputFile = new FileInfo(inputFilePath);
-                    outputDirectoryPath = inputFile.Directory.FullName;
+                    var inputFile = new FileInfo(inputFilePath);
+
+                    if (inputFile.Directory == null)
+                    {
+                        outputDirectoryPath = string.Empty;
+                    }
+                    else
+                    {
+                        outputDirectoryPath = inputFile.Directory.FullName;
+                    }
                 }
 
                 // Define the full path to output file base name
@@ -608,7 +615,7 @@ namespace FastaFileSplitterLibrary
 
             try
             {
-                if (inputFilePath is null || inputFilePath.Length == 0)
+                if (string.IsNullOrWhiteSpace(inputFilePath))
                 {
                     ShowMessage("Input file name is empty");
                     SetBaseClassErrorCode(ProcessFilesErrorCodes.InvalidInputFilePath);
