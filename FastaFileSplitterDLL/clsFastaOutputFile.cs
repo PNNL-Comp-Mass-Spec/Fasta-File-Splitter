@@ -5,14 +5,9 @@ namespace FastaFileSplitterLibrary
 {
     public class clsFastaOutputFile
     {
-
-        #region Constants and Enums
         public const char DEFAULT_PROTEIN_LINE_START_CHAR = '>';
         public const char DEFAULT_PROTEIN_LINE_ACCESSION_END_CHAR = ' ';
         public const int DEFAULT_RESIDUES_PER_LINE = 60;
-        #endregion
-
-        #region Class wide Variables
 
         protected bool mOutputFileIsOpen;
         protected string mOutputFilePath;
@@ -22,10 +17,6 @@ namespace FastaFileSplitterLibrary
         protected int mResiduesPerLine;
         protected int mTotalProteinsInFile;
         protected long mTotalResiduesInFile;
-
-        #endregion
-
-        #region Properties
 
         public bool OutputFileIsOpen
         {
@@ -73,7 +64,6 @@ namespace FastaFileSplitterLibrary
                 return mTotalResiduesInFile;
             }
         }
-        #endregion
 
         public clsFastaOutputFile(string outputFilePath) : this(outputFilePath, DEFAULT_PROTEIN_LINE_START_CHAR, DEFAULT_PROTEIN_LINE_ACCESSION_END_CHAR)
         {

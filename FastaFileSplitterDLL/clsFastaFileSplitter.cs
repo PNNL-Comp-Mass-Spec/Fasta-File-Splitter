@@ -15,9 +15,6 @@ namespace FastaFileSplitterLibrary
 {
     public class clsFastaFileSplitter : PRISM.FileProcessor.ProcessFilesBase
     {
-
-        #region Constants and Enums
-
         public const string XML_SECTION_OPTIONS = "FastaFileSplitterOptions";
         public const int DEFAULT_SPLIT_COUNT = 10;
 
@@ -31,10 +28,6 @@ namespace FastaFileSplitterLibrary
             UnspecifiedError = -1
         }
 
-        #endregion
-
-        #region Structures
-
         public struct FastaFileInfoType
         {
             public string FilePath;
@@ -42,9 +35,6 @@ namespace FastaFileSplitterLibrary
             public long NumResidues;
         }
 
-        #endregion
-
-        #region Class wide Variables
         private int mSplitCount;
         private int mInputFileProteinsProcessed;
         private int mInputFileLinesRead;
@@ -54,9 +44,6 @@ namespace FastaFileSplitterLibrary
         private List<FastaFileInfoType> mSplitFastaFileInfo;
         public FastaFileOptionsClass FastaFileOptions;
         private FastaFileSplitterErrorCode mLocalErrorCode;
-        #endregion
-
-        #region Processing Options Interface Functions
 
         public int InputFileProteinsProcessed
         {
@@ -112,8 +99,6 @@ namespace FastaFileSplitterLibrary
                 return mSplitFastaFileInfo;
             }
         }
-
-        #endregion
 
         /// <summary>
         /// Constructor
