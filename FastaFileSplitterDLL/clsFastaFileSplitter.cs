@@ -232,39 +232,14 @@ namespace FastaFileSplitterLibrary
             string errorMessage;
             if (ErrorCode == ProcessFilesErrorCodes.LocalizedError | ErrorCode == ProcessFilesErrorCodes.NoError)
             {
-                switch (mLocalErrorCode)
+                errorMessage = mLocalErrorCode switch
                 {
-                    case FastaFileSplitterErrorCode.NoError:
-                        {
-                            errorMessage = "";
-                            break;
-                        }
-
-                    case FastaFileSplitterErrorCode.ErrorReadingInputFile:
-                        {
-                            errorMessage = "Error reading input file";
-                            break;
-                        }
-
-                    case FastaFileSplitterErrorCode.ErrorWritingOutputFile:
-                        {
-                            errorMessage = "Error writing to the output file";
-                            break;
-                        }
-
-                    case FastaFileSplitterErrorCode.UnspecifiedError:
-                        {
-                            errorMessage = "Unspecified localized error";
-                            break;
-                        }
-
-                    default:
-                        {
-                            // This shouldn't happen
-                            errorMessage = "Unknown error state";
-                            break;
-                        }
-                }
+                    FastaFileSplitterErrorCode.NoError => "",
+                    FastaFileSplitterErrorCode.ErrorReadingInputFile => "Error reading input file",
+                    FastaFileSplitterErrorCode.ErrorWritingOutputFile => "Error writing to the output file",
+                    FastaFileSplitterErrorCode.UnspecifiedError => "Unspecified localized error",
+                    _ => "Unknown error state"
+                };
             }
             else
             {
