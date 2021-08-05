@@ -8,7 +8,6 @@ using PRISM;
 using PRISM.FileProcessor;
 using ProteinFileReader;
 
-
 namespace FastaFileSplitterLibrary
 {
     /// <summary>

@@ -96,7 +96,6 @@ namespace FastaFileSplitter
                 var fastaFileSplitter = new clsFastaFileSplitter(mSplitCount)
                 {
                     LogMessagesToFile = mLogMessagesToFile
-
                 };
 
                 RegisterEvents(fastaFileSplitter);
@@ -161,7 +160,6 @@ namespace FastaFileSplitter
                                                                                    select ("/" + item)).ToList());
                     return false;
                 }
-
 
                 // Query commandLineParser to see if various parameters are present
                 if (commandLineParser.RetrieveValueForParameter("I", out var inputFilePath))

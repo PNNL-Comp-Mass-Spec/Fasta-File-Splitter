@@ -44,10 +44,10 @@ namespace FastaFileSplitterLibrary
         /// <summary>
         /// Residues per line to write to the output file
         /// </summary>
+        // ReSharper disable once UnusedMember.Global
         public int ResiduesPerLine
         {
             get => mResiduesPerLine;
-
             set
             {
                 if (value < 1)
