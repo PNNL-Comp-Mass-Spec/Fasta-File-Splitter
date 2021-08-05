@@ -192,13 +192,14 @@ namespace FastaFileSplitterLibrary
                 if (splitCount >= 10)
                 {
                     var zeroCount = (int)Math.Round(Math.Floor(Math.Log10(splitCount) + 1d));
-                    for (int index = 2, loopTo = zeroCount; index <= loopTo; index++)
+                    for (var index = 2; index <= zeroCount; index++)
+                    {
                         formatCode += "0";
+                    }
                 }
 
                 // Create each of the output files
-                var loopTo1 = splitCount;
-                for (fileNum = 1; fileNum <= loopTo1; fileNum++)
+                for (fileNum = 1; fileNum <= splitCount; fileNum++)
                 {
                     var outputFilePath = outputFilePathBase + "_" + splitCount + "x_" + fileNum.ToString(formatCode) + ".fasta";
                     outputFiles[fileNum - 1] = new clsFastaOutputFile(outputFilePath);
@@ -297,8 +298,11 @@ namespace FastaFileSplitterLibrary
 
             // Compute the average number of residues stored in each file
             var sum = 0L;
-            for (int index = 0, loopTo = splitCount - 1; index <= loopTo; index++)
+            for (var index = 0; index < splitCount; index++)
+            {
                 sum += outputFiles[index].TotalResiduesInFile;
+            }
+
             if (sum == 0L)
             {
                 // We haven't stored any proteins yet
@@ -311,7 +315,7 @@ namespace FastaFileSplitterLibrary
             // Populate candidates with the file numbers that have residue counts less than averageCount
 
             var candidates = new List<int>();
-            for (int index = 0, loopTo1 = splitCount - 1; index <= loopTo1; index++)
+            for (var index = 0; index < splitCount; index++)
             {
                 if (outputFiles[index].TotalResiduesInFile < averageCount)
                 {
@@ -574,7 +578,7 @@ namespace FastaFileSplitterLibrary
 
                 // Close the output files
                 // Store the info on the newly created files in mSplitFastaFileInfo
-                for (int index = 0, loopTo = splitCount - 1; index <= loopTo; index++)
+                for (var index = 0; index < splitCount; index++)
                 {
                     outputFiles[index].CloseFile();
                     var udtFileInfo = new FastaFileInfoType()
@@ -716,7 +720,7 @@ namespace FastaFileSplitterLibrary
                 using (var statsFileWriter = new StreamWriter(new FileStream(statsFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
                 {
                     statsFileWriter.WriteLine("Section" + '\t' + "Proteins" + '\t' + "Residues" + '\t' + "FileSize_MB" + '\t' + "FileName");
-                    for (int fileIndex = 0, loopTo = splitCount - 1; fileIndex <= loopTo; fileIndex++)
+                    for (var fileIndex = 0; fileIndex < splitCount; fileIndex++)
                     {
                         statsFileWriter.Write((fileIndex + 1).ToString() + '\t' + outputFiles[fileIndex].TotalProteinsInFile + '\t' + outputFiles[fileIndex].TotalResiduesInFile);
                         try
