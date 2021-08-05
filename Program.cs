@@ -28,7 +28,7 @@ namespace FastaFileSplitter
     /// <summary>
     /// FASTA file splitter program
     /// </summary>
-    static class Program
+    internal static class Program
     {
         /// <summary>
         /// Program date

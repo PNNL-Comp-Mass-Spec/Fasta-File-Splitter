@@ -24,12 +24,12 @@ namespace FastaFileSplitterLibrary
         /// </summary>
         public const int DEFAULT_RESIDUES_PER_LINE = 60;
 
-        protected StreamWriter mOutputFile;
-        protected string mProteinLineStartChar;
-        protected string mProteinLineAccessionEndChar;
-        protected int mResiduesPerLine;
-        protected int mTotalProteinsInFile;
-        protected long mTotalResiduesInFile;
+        private readonly StreamWriter mOutputFile;
+        private readonly string mProteinLineStartChar;
+        private readonly string mProteinLineAccessionEndChar;
+        private int mResiduesPerLine;
+        private int mTotalProteinsInFile;
+        private long mTotalResiduesInFile;
 
         /// <summary>
         /// True if the output file is open for writing
