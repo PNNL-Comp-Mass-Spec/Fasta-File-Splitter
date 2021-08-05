@@ -174,7 +174,6 @@ namespace FastaFileSplitterLibrary
             FastaFileSplitCount = splitCount;
         }
 
-        private bool CreateOutputFiles(int splitCount, string outputFilePathBase, ref clsFastaOutputFile[] outputFiles)
         /// <summary>
         /// Create the output files
         /// </summary>
@@ -182,11 +181,13 @@ namespace FastaFileSplitterLibrary
         /// <param name="outputFilePathBase"></param>
         /// <param name="outputFiles">Output: zero-based array that tracks the output file handles, along with the number of residues written to each file</param>
         /// <returns></returns>
+        private bool CreateOutputFiles(int splitCount, string outputFilePathBase, out clsFastaOutputFile[] outputFiles)
         {
             var fileNum = 0;
+            outputFiles = new clsFastaOutputFile[splitCount];
+
             try
             {
-                outputFiles = new clsFastaOutputFile[splitCount];
                 var formatCode = "0";
                 if (splitCount >= 10)
                 {
@@ -526,7 +527,7 @@ namespace FastaFileSplitterLibrary
                     splitCount = 1;
 
                 // Create the output files
-                var success = CreateOutputFiles(splitCount, outputFilePathBase, ref outputFiles);
+                var success = CreateOutputFiles(splitCount, outputFilePathBase, out var outputFiles);
                 if (!success)
                     return false;
 
