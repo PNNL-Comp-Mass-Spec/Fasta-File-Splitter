@@ -142,7 +142,7 @@ namespace FastaFileSplitter
         {
             // Returns True if no problems; otherwise, returns false
 
-            string value = string.Empty;
+            var value = string.Empty;
             var validParameters = new List<string>() { "I", "N", "O", "P", "S", "A", "R", "L" };
             try
             {

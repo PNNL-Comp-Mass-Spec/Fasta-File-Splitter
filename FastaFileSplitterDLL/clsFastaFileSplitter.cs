@@ -116,14 +116,14 @@ namespace FastaFileSplitterLibrary
 
         private bool CreateOutputFiles(int splitCount, string outputFilePathBase, ref clsFastaOutputFile[] outputFiles)
         {
-            int fileNum = 0;
+            var fileNum = 0;
             try
             {
                 outputFiles = new clsFastaOutputFile[splitCount];
-                string formatCode = "0";
+                var formatCode = "0";
                 if (splitCount >= 10)
                 {
-                    int zeroCount = (int)Math.Round(Math.Floor(Math.Log10(splitCount) + 1d));
+                    var zeroCount = (int)Math.Round(Math.Floor(Math.Log10(splitCount) + 1d));
                     for (int index = 2, loopTo = zeroCount; index <= loopTo; index++)
                         formatCode += "0";
                 }
@@ -132,7 +132,7 @@ namespace FastaFileSplitterLibrary
                 var loopTo1 = splitCount;
                 for (fileNum = 1; fileNum <= loopTo1; fileNum++)
                 {
-                    string outputFilePath = outputFilePathBase + "_" + splitCount + "x_" + fileNum.ToString(formatCode) + ".fasta";
+                    var outputFilePath = outputFilePathBase + "_" + splitCount + "x_" + fileNum.ToString(formatCode) + ".fasta";
                     outputFiles[fileNum - 1] = new clsFastaOutputFile(outputFilePath);
                 }
 
@@ -225,7 +225,7 @@ namespace FastaFileSplitterLibrary
             }
 
             // Compute the average number of residues stored in each file
-            long sum = 0L;
+            var sum = 0L;
             for (int index = 0, loopTo = splitCount - 1; index <= loopTo; index++)
                 sum += outputFiles[index].TotalResiduesInFile;
             if (sum == 0L)
@@ -235,7 +235,7 @@ namespace FastaFileSplitterLibrary
                 return mRandom.Next(1, splitCount);
             }
 
-            double averageCount = sum / (double)splitCount;
+            var averageCount = sum / (double)splitCount;
 
             // Populate candidates with the file numbers that have residue counts less than averageCount
 
@@ -257,7 +257,7 @@ namespace FastaFileSplitterLibrary
                 // Thus, we pass candidateCount to the upper bound of rand.Next() to get a
                 // range of values from 0 to candidateCount-1
 
-                int randomIndex = mRandom.Next(0, candidates.Count);
+                var randomIndex = mRandom.Next(0, candidates.Count);
 
                 // Return the file number at index randomIndex in candidates
                 return candidates[randomIndex];
@@ -287,7 +287,7 @@ namespace FastaFileSplitterLibrary
         /// <returns></returns>
         public static bool IsFastaFile(string filePath)
         {
-            string fileExtension = Path.GetExtension(filePath);
+            var fileExtension = Path.GetExtension(filePath);
             if (fileExtension.Equals(".fasta", StringComparison.OrdinalIgnoreCase) || fileExtension.Equals(".faa", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
@@ -366,7 +366,7 @@ namespace FastaFileSplitterLibrary
                 fastaFileReader = new ProteinFileReader.FastaFileReader();
 
                 // Define the output file name
-                string outputFileNameBase = string.Empty;
+                var outputFileNameBase = string.Empty;
                 if (!string.IsNullOrWhiteSpace(outputFileNameBaseBaseOverride))
                 {
                     if (Path.HasExtension(outputFileNameBaseBaseOverride))
@@ -430,7 +430,7 @@ namespace FastaFileSplitterLibrary
 
             // The following is a zero-based array that tracks the output file handles, along with the number of residues written to each file
             clsFastaOutputFile[] outputFiles = null;
-            string outputFilePathBase = string.Empty;
+            var outputFilePathBase = string.Empty;
             bool inputProteinFound;
             int outputFileIndex;
             try
@@ -438,7 +438,7 @@ namespace FastaFileSplitterLibrary
                 mSplitFastaFileInfo.Clear();
 
                 // Open the input file and define the output file path
-                bool openSuccess = OpenInputFile(inputFastaFilePath, outputDirectoryPath, outputFileNameBaseOverride, out fastaFileReader, out outputFilePathBase);
+                var openSuccess = OpenInputFile(inputFastaFilePath, outputDirectoryPath, outputFileNameBaseOverride, out fastaFileReader, out outputFilePathBase);
 
                 // Abort processing if we couldn't successfully open the input file
                 if (!openSuccess)
@@ -447,7 +447,7 @@ namespace FastaFileSplitterLibrary
                     splitCount = 1;
 
                 // Create the output files
-                bool success = CreateOutputFiles(splitCount, outputFilePathBase, ref outputFiles);
+                var success = CreateOutputFiles(splitCount, outputFilePathBase, ref outputFiles);
                 if (!success)
                     return false;
 
@@ -480,8 +480,8 @@ namespace FastaFileSplitterLibrary
                         }
 
                         // Append the current protein to the file at index outputFileIndex
-                        string description = fastaFileReader.ProteinDescription;
-                        string sequence = fastaFileReader.ProteinSequence;
+                        var description = fastaFileReader.ProteinDescription;
+                        var sequence = fastaFileReader.ProteinSequence;
                         outputFiles[outputFileIndex].StoreProtein(fastaFileReader.ProteinName, description, sequence);
 
                         UpdateProgress(fastaFileReader.PercentFileProcessed());

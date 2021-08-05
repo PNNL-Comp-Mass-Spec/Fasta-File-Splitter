@@ -112,10 +112,10 @@ namespace FastaFileSplitterLibrary
                     mOutputFile.WriteLine(mProteinLineStartChar + proteinName + mProteinLineAccessionEndChar + description);
 
                     // Now write out the residues, storing mResiduesPerLine residues per line
-                    int startIndex = 0;
+                    var startIndex = 0;
                     while (startIndex < sequence.Length)
                     {
-                        int charCount = mResiduesPerLine;
+                        var charCount = mResiduesPerLine;
                         if (startIndex + charCount > sequence.Length)
                         {
                             charCount = sequence.Length - startIndex;
