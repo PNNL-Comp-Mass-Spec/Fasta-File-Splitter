@@ -221,8 +221,7 @@ namespace FastaFileSplitterLibrary
         /// </summary>
         public override IList<string> GetDefaultExtensionsToParse()
         {
-            var extensionsToParse = new List<string>() { ".fasta", ".faa" };
-            return extensionsToParse;
+            return new List<string> { ".fasta", ".faa" };
         }
 
         /// <summary>
@@ -298,6 +297,7 @@ namespace FastaFileSplitterLibrary
 
             // Compute the average number of residues stored in each file
             var sum = 0L;
+
             for (var index = 0; index < splitCount; index++)
             {
                 sum += outputFiles[index].TotalResiduesInFile;
@@ -359,6 +359,7 @@ namespace FastaFileSplitterLibrary
         public static bool IsFastaFile(string filePath)
         {
             var fileExtension = Path.GetExtension(filePath);
+
             if (fileExtension.Equals(".fasta", StringComparison.OrdinalIgnoreCase) || fileExtension.Equals(".faa", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
@@ -414,10 +415,11 @@ namespace FastaFileSplitterLibrary
             return true;
         }
 
-        private bool OpenInputFile(string inputFilePath, string outputDirectoryPath, string outputFileNameBaseBaseOverride, out ProteinFileReader.FastaFileReader fastaFileReader, out string outputFilePathBase)
+        private bool OpenInputFile(string inputFilePath, string outputDirectoryPath, string outputFileNameBaseBaseOverride, out FastaFileReader fastaFileReader, out string outputFilePathBase)
         {
             fastaFileReader = null;
             outputFilePathBase = string.Empty;
+
             try
             {
                 if (string.IsNullOrWhiteSpace(inputFilePath))
@@ -434,7 +436,7 @@ namespace FastaFileSplitterLibrary
                 }
 
                 // Instantiate the protein file reader object (assuming inputFilePath is a .Fasta file)
-                fastaFileReader = new ProteinFileReader.FastaFileReader();
+                fastaFileReader = new FastaFileReader();
 
                 // Define the output file name
                 var outputFileNameBase = string.Empty;
@@ -518,11 +520,13 @@ namespace FastaFileSplitterLibrary
                 // Abort processing if we couldn't successfully open the input file
                 if (!openSuccess)
                     return false;
+
                 if (splitCount < 1)
                     splitCount = 1;
 
                 // Create the output files
                 var success = CreateOutputFiles(splitCount, outputFilePathBase, out var outputFiles);
+
                 if (!success)
                     return false;
 
@@ -539,16 +543,21 @@ namespace FastaFileSplitterLibrary
                 mInputFileProteinsProcessed = 0;
                 mInputFileLineSkipCount = 0;
                 mInputFileLinesRead = 0;
+                bool inputProteinFound;
+
                 do
                 {
                     inputProteinFound = fastaFileReader.ReadNextProteinEntry();
                     mInputFileLineSkipCount += fastaFileReader.LineSkipCount;
+
                     if (inputProteinFound)
                     {
-                        mInputFileProteinsProcessed += 1;
+                        mInputFileProteinsProcessed++;
                         mInputFileLinesRead = fastaFileReader.LinesRead;
-                        outputFileIndex = GetTargetFileNum(splitCount, ref outputFiles) - 1;
-                        if (outputFileIndex < 0 || outputFileIndex >= outputFiles.Count())
+
+                        var outputFileIndex = GetTargetFileNum(splitCount, ref outputFiles) - 1;
+
+                        if (outputFileIndex < 0 || outputFileIndex >= outputFiles.Length)
                         {
                             Console.WriteLine("Programming bug: index is outside the expected range.  Defaulting to use OutputFileIndex=0");
                             outputFileIndex = 0;
@@ -572,12 +581,14 @@ namespace FastaFileSplitterLibrary
                 for (var index = 0; index < splitCount; index++)
                 {
                     outputFiles[index].CloseFile();
-                    var udtFileInfo = new FastaFileInfoType()
+
+                    var udtFileInfo = new FastaFileInfoType
                     {
                         FilePath = outputFiles[index].OutputFilePath,
                         NumProteins = outputFiles[index].TotalProteinsInFile,
                         NumResidues = outputFiles[index].TotalResiduesInFile
                     };
+
                     mSplitFastaFileInfo.Add(udtFileInfo);
                 }
 
@@ -611,6 +622,7 @@ namespace FastaFileSplitterLibrary
             if (!LoadParameterFileSettings(parameterFilePath))
             {
                 ShowErrorMessage("Parameter file load error: " + parameterFilePath);
+
                 if (ErrorCode == ProcessFilesErrorCodes.NoError)
                 {
                     SetBaseClassErrorCode(ProcessFilesErrorCodes.InvalidParameterFile);
@@ -645,7 +657,9 @@ namespace FastaFileSplitterLibrary
                     // Obtain the full path to the input file
                     var file = new FileInfo(inputFilePath);
                     var inputFilePathFull = file.FullName;
+
                     var success = SplitFastaFile(inputFilePathFull, outputDirectoryPath, FastaFileSplitCount);
+
                     if (success)
                     {
                         ShowMessage(string.Empty, false);

@@ -113,11 +113,16 @@ namespace FastaFileSplitterLibrary
             }
 
             mOutputFilePath = outputFilePath;
+
             mOutputFile = new StreamWriter(new FileStream(outputFilePath, FileMode.Create, FileAccess.Write, FileShare.Read));
+
             mOutputFileIsOpen = true;
+
             mProteinLineStartChar = proteinLineStartChar.ToString();
             mProteinLineAccessionEndChar = proteinLineAccessionEndChar.ToString();
+
             mResiduesPerLine = DEFAULT_RESIDUES_PER_LINE;
+
             mTotalProteinsInFile = 0;
             mTotalResiduesInFile = 0L;
         }

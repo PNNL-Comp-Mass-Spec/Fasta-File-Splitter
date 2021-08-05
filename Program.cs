@@ -58,7 +58,7 @@ namespace FastaFileSplitter
             if (percentComplete > 100)
                 percentComplete = 100;
 
-            Console.Write("Processing: " + percentComplete.ToString() + "% ");
+            Console.Write("Processing: " + percentComplete + "% ");
             if (addCarriageReturn)
             {
                 Console.WriteLine();
@@ -72,7 +72,6 @@ namespace FastaFileSplitter
         public static int Main()
         {
             var commandLineParser = new clsParseCommandLine();
-            bool proceed;
 
             // Initialize the options
             mInputFilePath = string.Empty;
@@ -82,14 +81,10 @@ namespace FastaFileSplitter
             mRecurseDirectories = false;
             mMaxLevelsToRecurse = 0;
             mLogMessagesToFile = false;
+
             try
             {
-                proceed = false;
-                if (commandLineParser.ParseCommandLine())
-                {
-                    if (SetOptionsUsingCommandLineParameters(commandLineParser))
-                        proceed = true;
-                }
+                var proceed = commandLineParser.ParseCommandLine() && SetOptionsUsingCommandLineParameters(commandLineParser);
 
                 if (!proceed || commandLineParser.NeedToShowHelp || commandLineParser.ParameterCount + commandLineParser.NonSwitchParameterCount == 0 || mInputFilePath.Length == 0)
                 {
@@ -148,7 +143,7 @@ namespace FastaFileSplitter
 
         private static string GetAppVersion()
         {
-            return PRISM.FileProcessor.ProcessFilesOrDirectoriesBase.GetAppVersion(PROGRAM_DATE);
+            return ProcessFilesOrDirectoriesBase.GetAppVersion(PROGRAM_DATE);
         }
 
         private static bool SetOptionsUsingCommandLineParameters(clsParseCommandLine commandLineParser)
@@ -206,6 +201,7 @@ namespace FastaFileSplitter
                     mRecreateDirectoryHierarchyInAlternatePath = true;
                 if (commandLineParser.IsParameterPresent("L"))
                     mLogMessagesToFile = true;
+
                 return true;
             }
             catch (Exception ex)
@@ -219,20 +215,32 @@ namespace FastaFileSplitter
         {
             try
             {
-                Console.WriteLine(ConsoleMsgUtils.WrapParagraph("This program can be used to split apart a protein FASTA file into a number of sections. " + "Although the splitting is random, each section will have a nearly identical number of residues."));
+                Console.WriteLine(ConsoleMsgUtils.WrapParagraph(
+                    "This program can be used to split apart a protein FASTA file into a number of sections. " +
+                    "Although the splitting is random, each section will have a nearly identical number of residues."));
                 Console.WriteLine();
                 Console.WriteLine("Program syntax:");
-                Console.WriteLine(Path.GetFileName(PRISM.FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath()) + " /I:SourceFastaFile [/O:OutputDirectoryPath]");
+                Console.WriteLine(Path.GetFileName(ProcessFilesOrDirectoriesBase.GetAppPath()) +
+                                  " /I:SourceFastaFile [/O:OutputDirectoryPath]");
                 Console.WriteLine(" [/N:SplitCount] [/P:ParameterFilePath] ");
                 Console.WriteLine(" [/S:[MaxLevel]] [/A:AlternateOutputDirectoryPath] [/R] [/L]");
                 Console.WriteLine();
-                Console.WriteLine(ConsoleMsgUtils.WrapParagraph("The input file path can contain the wildcard character * and should point to a FASTA file. " + "The output directory switch is optional.  If omitted, the output file will be created in the same directory as the input file."));
+                Console.WriteLine(ConsoleMsgUtils.WrapParagraph(
+                    "The input file path can contain the wildcard character * and should point to a FASTA file. " +
+                    "The output directory switch is optional. " +
+                    "If omitted, the output file will be created in the same directory as the input file."));
                 Console.WriteLine();
                 Console.WriteLine("Use /N to define the number of parts to split the input file into.");
                 Console.WriteLine();
-                Console.WriteLine(ConsoleMsgUtils.WrapParagraph("The parameter file path is optional. " + "If included, it should point to a valid XML parameter file."));
+                Console.WriteLine(ConsoleMsgUtils.WrapParagraph(
+                    "The parameter file path is optional. " +
+                    "If included, it should point to a valid XML parameter file."));
                 Console.WriteLine();
-                Console.WriteLine(ConsoleMsgUtils.WrapParagraph("Use /S to process all valid files in the input directory and subdirectories. Include a number after /S (like /S:2) to limit the level of subdirectories to examine. " + "When using /S, you can redirect the output of the results using /A. " + "When using /S, you can use /R to re-create the input directory hierarchy in the alternate output directory (if defined)."));
+                Console.WriteLine(ConsoleMsgUtils.WrapParagraph(
+                    "Use /S to process all valid files in the input directory and subdirectories. " +
+                    "Include a number after /S (like /S:2) to limit the level of subdirectories to examine. " +
+                    "When using /S, you can redirect the output of the results using /A. " +
+                    "When using /S, you can use /R to re-create the input directory hierarchy in the alternate output directory (if defined)."));
                 Console.WriteLine("Use /L to log messages to a file.");
                 Console.WriteLine();
                 Console.WriteLine("Program written by Matthew Monroe for the Department of Energy (PNNL, Richland, WA) in 2010");
@@ -243,7 +251,7 @@ namespace FastaFileSplitter
                 Console.WriteLine();
 
                 // Delay for 750 msec in case the user double clicked this file from within Windows Explorer (or started the program via a shortcut)
-                System.Threading.Thread.Sleep(750);
+                Thread.Sleep(750);
             }
             catch (Exception ex)
             {
