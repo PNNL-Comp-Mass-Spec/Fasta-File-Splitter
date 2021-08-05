@@ -326,21 +326,6 @@ namespace FastaFileSplitterLibrary
             mInputFileLineSkipCount = 0;
             mSplitFastaFileInfo = new List<FastaFileInfoType>();
         }
-
-        /// <summary>
-        /// Examines the file's extension and true if it ends in .fasta or .faa
-        /// </summary>
-        /// <param name="filePath"></param>
-        public static bool IsFastaFile(string filePath)
-        {
-            var fileExtension = Path.GetExtension(filePath);
-
-            if (fileExtension.Equals(".fasta", StringComparison.OrdinalIgnoreCase) || fileExtension.Equals(".faa", StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-
-            return false;
         }
 
         /// <summary>
