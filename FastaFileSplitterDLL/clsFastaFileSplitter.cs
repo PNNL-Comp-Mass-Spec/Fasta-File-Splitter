@@ -213,14 +213,13 @@ namespace FastaFileSplitterLibrary
         }
 
         /// <summary>
-        /// Examines the Residue counts in the files in outputFiles()
+        /// Examines the Residue counts in the output files
         /// Will randomly choose one of the files whose residue count is less than the average residue count
         /// </summary>
         /// <param name="splitCount">Number of files the source .Fasta file is being split into</param>
-        /// <param name="outputFiles">Array of clsFastaOutputFile objects</param>
-        /// <returns>Randomly selected target file number (ranging from 1 to splitCount)</returns>
-        /// <remarks></remarks>
-        private int GetTargetFileNum(int splitCount, ref clsFastaOutputFile[] outputFiles)
+        /// <param name="outputFiles">List of clsFastaOutputFile objects</param>
+        /// <returns>Randomly selected target file index (ranging from 0 to splitCount - 1)</returns>
+        private int GetTargetFileIndex(int splitCount, IReadOnlyList<clsFastaOutputFile> outputFiles)
         {
             // The strategy:
             // 1) Compute the average residue count already stored to the files
@@ -229,23 +228,18 @@ namespace FastaFileSplitterLibrary
 
             if (splitCount <= 1)
             {
-                // Nothing to do; just return 1
-                return 1;
+                // Nothing to do; just return 0
+                return 0;
             }
 
             // Compute the average number of residues stored in each file
-            var sum = 0L;
+            var sum = outputFiles.Sum(outputFile => outputFile.TotalResiduesInFile);
 
-            for (var index = 0; index < splitCount; index++)
-            {
-                sum += outputFiles[index].TotalResiduesInFile;
-            }
-
-            if (sum == 0L)
+            if (sum == 0)
             {
                 // We haven't stored any proteins yet
-                // Just return a random number between 1 and splitCount
-                return mRandom.Next(1, splitCount);
+                // Just return a random file index
+                return mRandom.Next(0, splitCount - 1);
             }
 
             var averageCount = sum / (double)splitCount;
@@ -253,12 +247,16 @@ namespace FastaFileSplitterLibrary
             // Populate candidates with the file numbers that have residue counts less than averageCount
 
             var candidates = new List<int>();
-            for (var index = 0; index < splitCount; index++)
+
+            var fileIndex = 0;
+
+            foreach (var outputFile in outputFiles)
             {
-                if (outputFiles[index].TotalResiduesInFile < averageCount)
+                if (outputFile.TotalResiduesInFile < averageCount)
                 {
-                    candidates.Add(index + 1);
+                    candidates.Add(fileIndex);
                 }
+                fileIndex++;
             }
 
             if (candidates.Count > 0)
@@ -272,12 +270,12 @@ namespace FastaFileSplitterLibrary
 
                 var randomIndex = mRandom.Next(0, candidates.Count);
 
-                // Return the file number at index randomIndex in candidates
+                // Return the file index at index randomIndex in candidates
                 return candidates[randomIndex];
             }
 
-            // Pick a file at random
-            return mRandom.Next(1, splitCount);
+            // Pick a file index at random
+            return mRandom.Next(0, splitCount - 1);
         }
 
         private void InitializeLocalVariables()
@@ -484,7 +482,7 @@ namespace FastaFileSplitterLibrary
                         InputFileProteinsProcessed++;
                         InputFileLinesRead = fastaFileReader.LinesRead;
 
-                        var outputFileIndex = GetTargetFileNum(splitCount, ref outputFiles) - 1;
+                        var outputFileIndex = GetTargetFileIndex(splitCount, outputFiles);
 
                         if (outputFileIndex < 0 || outputFileIndex >= outputFiles.Count)
                         {
