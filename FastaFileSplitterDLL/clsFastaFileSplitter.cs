@@ -337,11 +337,9 @@ namespace FastaFileSplitterLibrary
                 // Return the file number at index randomIndex in candidates
                 return candidates[randomIndex];
             }
-            else
-            {
-                // Pick a file at random
-                return mRandom.Next(1, splitCount);
-            }
+
+            // Pick a file at random
+            return mRandom.Next(1, splitCount);
         }
 
         private void InitializeLocalVariables()
@@ -365,10 +363,8 @@ namespace FastaFileSplitterLibrary
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         /// <summary>
@@ -405,10 +401,8 @@ namespace FastaFileSplitterLibrary
                         SetBaseClassErrorCode(ProcessFilesErrorCodes.InvalidParameterFile);
                         return false;
                     }
-                    else
-                    {
-                        FastaFileSplitCount = settingsFile.GetParam(XML_SECTION_OPTIONS, "SplitCount", FastaFileSplitCount);
-                    }
+
+                    FastaFileSplitCount = settingsFile.GetParam(XML_SECTION_OPTIONS, "SplitCount", FastaFileSplitCount);
                 }
             }
             catch (Exception ex)
@@ -612,9 +606,6 @@ namespace FastaFileSplitterLibrary
         /// <returns>True if success, False if failure</returns>
         public override bool ProcessFile(string inputFilePath, string outputDirectoryPath, string parameterFilePath, bool resetErrorCode)
         {
-            FileInfo file;
-            string inputFilePathFull;
-            var success = default(bool);
             if (resetErrorCode)
             {
                 SetLocalErrorCode(FastaFileSplitterErrorCode.NoError);
@@ -637,51 +628,48 @@ namespace FastaFileSplitterLibrary
                 {
                     ShowMessage("Input file name is empty");
                     SetBaseClassErrorCode(ProcessFilesErrorCodes.InvalidInputFilePath);
+                    return false;
                 }
-                else
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("Parsing " + Path.GetFileName(inputFilePath));
 
-                    // Note that CleanupFilePaths() will update mOutputDirectoryPath, which is used by LogMessage()
-                    if (!CleanupFilePaths(ref inputFilePath, ref outputDirectoryPath))
+                Console.WriteLine();
+                Console.WriteLine("Parsing " + Path.GetFileName(inputFilePath));
+
+                // Note that CleanupFilePaths() will update mOutputDirectoryPath, which is used by LogMessage()
+                if (!CleanupFilePaths(ref inputFilePath, ref outputDirectoryPath))
+                {
+                    SetBaseClassErrorCode(ProcessFilesErrorCodes.FilePathError);
+                    return false;
+                }
+
+                ResetProgress();
+
+                try
+                {
+                    // Obtain the full path to the input file
+                    var file = new FileInfo(inputFilePath);
+                    var inputFilePathFull = file.FullName;
+                    var success = SplitFastaFile(inputFilePathFull, outputDirectoryPath, FastaFileSplitCount);
+                    if (success)
                     {
-                        SetBaseClassErrorCode(ProcessFilesErrorCodes.FilePathError);
+                        ShowMessage(string.Empty, false);
+                        return true;
                     }
-                    else
-                    {
-                        ResetProgress();
-                        try
-                        {
-                            // Obtain the full path to the input file
-                            file = new FileInfo(inputFilePath);
-                            inputFilePathFull = file.FullName;
-                            success = SplitFastaFile(inputFilePathFull, outputDirectoryPath, FastaFileSplitCount);
-                            if (success)
-                            {
-                                ShowMessage(string.Empty, false);
-                            }
-                            else
-                            {
-                                SetLocalErrorCode(FastaFileSplitterErrorCode.UnspecifiedError);
-                                ShowErrorMessage("Error");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            HandleException("Error calling SplitFastaFile", ex);
-                        }
-                    }
+
+                    SetLocalErrorCode(FastaFileSplitterErrorCode.UnspecifiedError);
+                    ShowErrorMessage("Error");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    HandleException("Error calling SplitFastaFile", ex);
+                    return false;
                 }
             }
             catch (Exception ex)
             {
                 HandleException("Error in ProcessFile", ex);
+                return false;
             }
-
-            return success;
-        }
-
         private void SetLocalErrorCode(FastaFileSplitterErrorCode eNewErrorCode)
         {
             SetLocalErrorCode(eNewErrorCode, false);

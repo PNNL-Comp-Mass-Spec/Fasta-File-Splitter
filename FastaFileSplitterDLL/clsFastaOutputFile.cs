@@ -130,11 +130,13 @@ namespace FastaFileSplitterLibrary
         {
             try
             {
-                if (mOutputFileIsOpen && mOutputFile is object)
+                if (!mOutputFileIsOpen)
                 {
-                    mOutputFile.Close();
-                    mOutputFileIsOpen = false;
+                    return;
                 }
+
+                mOutputFile.Close();
+                mOutputFileIsOpen = false;
             }
             catch (Exception ex)
             {
@@ -150,35 +152,37 @@ namespace FastaFileSplitterLibrary
         /// <param name="sequence"></param>
         public void StoreProtein(string proteinName, string description, string sequence)
         {
-            if (mOutputFileIsOpen)
+            if (!mOutputFileIsOpen)
             {
-                try
+                return;
+            }
+
+            try
+            {
+                // Write out the protein header and description line
+                mOutputFile.WriteLine(mProteinLineStartChar + proteinName + mProteinLineAccessionEndChar + description);
+
+                // Now write out the residues, storing mResiduesPerLine residues per line
+                var startIndex = 0;
+                while (startIndex < sequence.Length)
                 {
-                    // Write out the protein header and description line
-                    mOutputFile.WriteLine(mProteinLineStartChar + proteinName + mProteinLineAccessionEndChar + description);
-
-                    // Now write out the residues, storing mResiduesPerLine residues per line
-                    var startIndex = 0;
-                    while (startIndex < sequence.Length)
+                    var charCount = mResiduesPerLine;
+                    if (startIndex + charCount > sequence.Length)
                     {
-                        var charCount = mResiduesPerLine;
-                        if (startIndex + charCount > sequence.Length)
-                        {
-                            charCount = sequence.Length - startIndex;
-                        }
-
-                        mOutputFile.WriteLine(sequence.Substring(startIndex, charCount));
-                        startIndex += charCount;
+                        charCount = sequence.Length - startIndex;
                     }
 
-                    mTotalProteinsInFile += 1;
-                    mTotalResiduesInFile += sequence.Length;
+                    mOutputFile.WriteLine(sequence.Substring(startIndex, charCount));
+                    startIndex += charCount;
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error in StoreProtein: " + ex.Message);
-                    throw;
-                }
+
+                mTotalProteinsInFile++;
+                mTotalResiduesInFile += sequence.Length;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in StoreProtein: " + ex.Message);
+                throw;
             }
         }
     }
