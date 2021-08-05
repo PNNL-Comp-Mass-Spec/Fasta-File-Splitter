@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using PRISM;
@@ -50,7 +49,6 @@ namespace FastaFileSplitterLibrary
             /// Error writing the output file
             /// </summary>
             ErrorWritingOutputFile = 2,
-            InvalidMotif = 4,
 
             /// <summary>
             /// Unspecified error
@@ -86,7 +84,7 @@ namespace FastaFileSplitterLibrary
         private readonly Random mRandom;
 
         private List<FastaFileInfoType> mSplitFastaFileInfo;
-        public FastaFileOptionsClass FastaFileOptions;
+
         private FastaFileSplitterErrorCode mLocalErrorCode;
 
         /// <summary>
@@ -349,7 +347,6 @@ namespace FastaFileSplitterLibrary
             mInputFileLinesRead = 0;
             mInputFileLineSkipCount = 0;
             mSplitFastaFileInfo = new List<FastaFileInfoType>();
-            FastaFileOptions = new FastaFileOptionsClass();
         }
 
         /// <summary>
@@ -740,15 +737,6 @@ namespace FastaFileSplitterLibrary
             {
                 HandleException("Error in WriteStatsFile", ex);
             }
-        }
-
-        /// <summary>
-        /// Options class
-        /// </summary>
-        public class FastaFileOptionsClass
-        {
-            public char ProteinLineStartChar { get; private set; } = '>';
-            public char ProteinLineAccessionEndChar { get; set; } = ' ';
         }
     }
 }
