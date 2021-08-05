@@ -670,12 +670,9 @@ namespace FastaFileSplitterLibrary
                 HandleException("Error in ProcessFile", ex);
                 return false;
             }
-        private void SetLocalErrorCode(FastaFileSplitterErrorCode eNewErrorCode)
-        {
-            SetLocalErrorCode(eNewErrorCode, false);
         }
 
-        private void SetLocalErrorCode(FastaFileSplitterErrorCode eNewErrorCode, bool leaveExistingErrorCodeUnchanged)
+        private void SetLocalErrorCode(FastaFileSplitterErrorCode eNewErrorCode, bool leaveExistingErrorCodeUnchanged = false)
         {
             if (leaveExistingErrorCodeUnchanged && mLocalErrorCode != FastaFileSplitterErrorCode.NoError)
             {

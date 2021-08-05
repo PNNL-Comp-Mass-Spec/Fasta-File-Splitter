@@ -96,17 +96,16 @@ namespace FastaFileSplitterLibrary
             }
         }
 
-        public clsFastaOutputFile(string outputFilePath) : this(outputFilePath, DEFAULT_PROTEIN_LINE_START_CHAR, DEFAULT_PROTEIN_LINE_ACCESSION_END_CHAR)
-        {
-        }
-
-        public clsFastaOutputFile(string outputFilePath, char proteinLineStartChar, char proteinLineAccessionEndChar)
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="outputFilePath"></param>
         /// <param name="proteinLineStartChar"></param>
         /// <param name="proteinLineAccessionEndChar"></param>
+        public clsFastaOutputFile(
+            string outputFilePath,
+            char proteinLineStartChar = DEFAULT_PROTEIN_LINE_START_CHAR,
+            char proteinLineAccessionEndChar = DEFAULT_PROTEIN_LINE_ACCESSION_END_CHAR)
         {
             if (outputFilePath is null || outputFilePath.Length == 0)
             {
