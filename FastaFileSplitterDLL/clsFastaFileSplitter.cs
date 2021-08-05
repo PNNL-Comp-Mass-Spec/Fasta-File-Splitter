@@ -713,25 +713,26 @@ namespace FastaFileSplitterLibrary
 
                 // Sleep 250 milliseconds to give the system time to close all of the file handles
                 Thread.Sleep(250);
-                using (var statsFileWriter = new StreamWriter(new FileStream(statsFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
-                {
-                    statsFileWriter.WriteLine("Section" + '\t' + "Proteins" + '\t' + "Residues" + '\t' + "FileSize_MB" + '\t' + "FileName");
-                    for (var fileIndex = 0; fileIndex < splitCount; fileIndex++)
-                    {
-                        statsFileWriter.Write((fileIndex + 1).ToString() + '\t' + outputFiles[fileIndex].TotalProteinsInFile + '\t' + outputFiles[fileIndex].TotalResiduesInFile);
-                        try
-                        {
-                            var outputFileInfo = new FileInfo(outputFiles[fileIndex].OutputFilePath);
-                            statsFileWriter.Write('\t' + (outputFileInfo.Length / 1024.0d / 1024.0d).ToString("0.000"));
-                        }
-                        catch (Exception ex)
-                        {
-                            // Error obtaining a FileInfo object; that's odd
-                            statsFileWriter.Write('\t' + "??");
-                        }
 
-                        statsFileWriter.WriteLine('\t' + Path.GetFileName(outputFiles[fileIndex].OutputFilePath));
+                using var statsFileWriter = new StreamWriter(new FileStream(statsFilePath, FileMode.Create, FileAccess.Write, FileShare.Read));
+
+                statsFileWriter.WriteLine("Section" + '\t' + "Proteins" + '\t' + "Residues" + '\t' + "FileSize_MB" + '\t' + "FileName");
+
+                for (var fileIndex = 0; fileIndex < splitCount; fileIndex++)
+                {
+                    statsFileWriter.Write((fileIndex + 1).ToString() + '\t' + outputFiles[fileIndex].TotalProteinsInFile + '\t' + outputFiles[fileIndex].TotalResiduesInFile);
+                    try
+                    {
+                        var outputFileInfo = new FileInfo(outputFiles[fileIndex].OutputFilePath);
+                        statsFileWriter.Write('\t' + (outputFileInfo.Length / 1024.0d / 1024.0d).ToString("0.000"));
                     }
+                    catch (Exception ex)
+                    {
+                        // Error creating a FileInfo object
+                        statsFileWriter.Write('\t' + "Error: " + ex.Message);
+                    }
+
+                    statsFileWriter.WriteLine('\t' + Path.GetFileName(outputFiles[fileIndex].OutputFilePath));
                 }
             }
             catch (Exception ex)
