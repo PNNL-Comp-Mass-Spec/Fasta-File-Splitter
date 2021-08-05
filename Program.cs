@@ -100,7 +100,7 @@ namespace FastaFileSplitter
                 };
 
                 RegisterEvents(fastaFileSplitter);
-                fastaFileSplitter.ProgressReset += mFastaFileSplitter_ProgressReset;
+                fastaFileSplitter.ProgressReset += ProgressReset;
 
                 int returnCode;
                 if (mRecurseDirectories)
@@ -273,7 +273,7 @@ namespace FastaFileSplitter
             sourceClass.StatusEvent += OnStatusEvent;
             sourceClass.ErrorEvent += OnErrorEvent;
             sourceClass.WarningEvent += OnWarningEvent;
-            sourceClass.ProgressUpdate += mFastaFileSplitter_ProgressChanged;
+            sourceClass.ProgressUpdate += ProgressChanged;
         }
 
         private static void OnErrorEvent(string message, Exception ex)
@@ -291,7 +291,7 @@ namespace FastaFileSplitter
             ConsoleMsgUtils.ShowWarning(message);
         }
 
-        private static void mFastaFileSplitter_ProgressChanged(string taskDescription, float percentComplete)
+        private static void ProgressChanged(string taskDescription, float percentComplete)
         {
             const int PERCENT_REPORT_INTERVAL = 25;
             const int PROGRESS_DOT_INTERVAL_MSEC = 250;
@@ -313,7 +313,7 @@ namespace FastaFileSplitter
             }
         }
 
-        private static void mFastaFileSplitter_ProgressReset()
+        private static void ProgressReset()
         {
             mLastProgressReportTime = DateTime.UtcNow;
             mLastProgressReportValue = 0;
