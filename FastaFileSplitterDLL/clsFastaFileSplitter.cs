@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using PRISM;
@@ -141,10 +142,10 @@ namespace FastaFileSplitterLibrary
         /// <param name="outputFilePathBase"></param>
         /// <param name="outputFiles">Output: zero-based array that tracks the output file handles, along with the number of residues written to each file</param>
         /// <returns>True if successful, false if an error</returns>
-        private bool CreateOutputFiles(int splitCount, string outputFilePathBase, out clsFastaOutputFile[] outputFiles)
+        private bool CreateOutputFiles(int splitCount, string outputFilePathBase, out List<clsFastaOutputFile> outputFiles)
         {
             var fileNum = 0;
-            outputFiles = new clsFastaOutputFile[splitCount];
+            outputFiles = new List<clsFastaOutputFile>();
 
             try
             {
@@ -162,8 +163,10 @@ namespace FastaFileSplitterLibrary
                 for (fileNum = 1; fileNum <= splitCount; fileNum++)
                 {
                     var outputFilePath = outputFilePathBase + "_" + splitCount + "x_" + fileNum.ToString(formatCode) + ".fasta";
-                    outputFiles[fileNum - 1] = new clsFastaOutputFile(outputFilePath);
-                    RegisterEvents(outputFiles[fileNum - 1]);
+                    var outputFile = new clsFastaOutputFile(outputFilePath);
+                    RegisterEvents(outputFile);
+
+                    outputFiles.Add(outputFile);
                 }
 
                 return true;
@@ -483,7 +486,7 @@ namespace FastaFileSplitterLibrary
 
                         var outputFileIndex = GetTargetFileNum(splitCount, ref outputFiles) - 1;
 
-                        if (outputFileIndex < 0 || outputFileIndex >= outputFiles.Length)
+                        if (outputFileIndex < 0 || outputFileIndex >= outputFiles.Count)
                         {
                             Console.WriteLine("Programming bug: index is outside the expected range.  Defaulting to use OutputFileIndex=0");
                             outputFileIndex = 0;
@@ -504,22 +507,22 @@ namespace FastaFileSplitterLibrary
 
                 // Close the output files
                 // Store the info on the newly created files in mSplitFastaFileInfo
-                for (var index = 0; index < splitCount; index++)
+                foreach (var outputFile in outputFiles)
                 {
-                    outputFiles[index].CloseFile();
+                    outputFile.CloseFile();
 
                     var udtFileInfo = new FastaFileInfoType
                     {
-                        FilePath = outputFiles[index].OutputFilePath,
-                        NumProteins = outputFiles[index].TotalProteinsInFile,
-                        NumResidues = outputFiles[index].TotalResiduesInFile
+                        FilePath = outputFile.OutputFilePath,
+                        NumProteins = outputFile.TotalProteinsInFile,
+                        NumResidues = outputFile.TotalResiduesInFile
                     };
 
                     SplitFastaFileInfo.Add(udtFileInfo);
                 }
 
                 // Create the stats file
-                WriteStatsFile(outputFilePathBase + "_SplitStats.txt", splitCount, ref outputFiles);
+                WriteStatsFile(outputFilePathBase + "_SplitStats.txt", outputFiles);
                 UpdateProgress("Done: Processed " + InputFileProteinsProcessed.ToString("###,##0") + " proteins (" + InputFileLinesRead.ToString("###,###,##0") + " lines)", 100f);
                 return true;
             }
@@ -632,11 +635,10 @@ namespace FastaFileSplitterLibrary
             }
         }
 
-        private void WriteStatsFile(string statsFilePath, int splitCount, ref clsFastaOutputFile[] outputFiles)
+        private void WriteStatsFile(string statsFilePath, IEnumerable<clsFastaOutputFile> outputFiles)
         {
             try
             {
-
                 // Sleep 250 milliseconds to give the system time to close all of the file handles
                 Thread.Sleep(250);
 
@@ -644,12 +646,15 @@ namespace FastaFileSplitterLibrary
 
                 statsFileWriter.WriteLine("Section" + '\t' + "Proteins" + '\t' + "Residues" + '\t' + "FileSize_MB" + '\t' + "FileName");
 
-                for (var fileIndex = 0; fileIndex < splitCount; fileIndex++)
+                var fileNumber = 0;
+                foreach (var outputFile in outputFiles)
                 {
-                    statsFileWriter.Write((fileIndex + 1).ToString() + '\t' + outputFiles[fileIndex].TotalProteinsInFile + '\t' + outputFiles[fileIndex].TotalResiduesInFile);
+                    fileNumber++;
+
+                    statsFileWriter.Write(fileNumber.ToString() + '\t' + outputFile.TotalProteinsInFile + '\t' + outputFile.TotalResiduesInFile);
                     try
                     {
-                        var outputFileInfo = new FileInfo(outputFiles[fileIndex].OutputFilePath);
+                        var outputFileInfo = new FileInfo(outputFile.OutputFilePath);
                         statsFileWriter.Write('\t' + (outputFileInfo.Length / 1024.0d / 1024.0d).ToString("0.000"));
                     }
                     catch (Exception ex)
@@ -658,7 +663,7 @@ namespace FastaFileSplitterLibrary
                         statsFileWriter.Write('\t' + "Error: " + ex.Message);
                     }
 
-                    statsFileWriter.WriteLine('\t' + Path.GetFileName(outputFiles[fileIndex].OutputFilePath));
+                    statsFileWriter.WriteLine('\t' + Path.GetFileName(outputFile.OutputFilePath));
                 }
             }
             catch (Exception ex)
