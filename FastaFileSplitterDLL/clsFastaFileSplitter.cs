@@ -180,7 +180,7 @@ namespace FastaFileSplitterLibrary
         /// <param name="splitCount"></param>
         /// <param name="outputFilePathBase"></param>
         /// <param name="outputFiles">Output: zero-based array that tracks the output file handles, along with the number of residues written to each file</param>
-        /// <returns></returns>
+        /// <returns>True if successful, false if an error</returns>
         private bool CreateOutputFiles(int splitCount, string outputFilePathBase, out clsFastaOutputFile[] outputFiles)
         {
             var fileNum = 0;
@@ -227,7 +227,6 @@ namespace FastaFileSplitterLibrary
         /// <summary>
         /// Get the error message, or an empty string if no error
         /// </summary>
-        /// <returns></returns>
         public override string GetErrorMessage()
         {
             string errorMessage;
@@ -486,7 +485,7 @@ namespace FastaFileSplitterLibrary
         /// <param name="inputFastaFilePath"></param>
         /// <param name="outputDirectoryPath"></param>
         /// <param name="splitCount"></param>
-        /// <returns></returns>
+        /// <returns>True if success, false if an error</returns>
         public bool SplitFastaFile(string inputFastaFilePath, string outputDirectoryPath, int splitCount)
         {
             return SplitFastaFile(inputFastaFilePath, outputDirectoryPath, string.Empty, splitCount);
@@ -501,7 +500,6 @@ namespace FastaFileSplitterLibrary
         /// <param name="outputFileNameBaseOverride">When defined, use this name for the protein output filename rather than auto-defining the name</param>
         /// <param name="splitCount"></param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks></remarks>
         public bool SplitFastaFile(string inputFastaFilePath, string outputDirectoryPath, string outputFileNameBaseOverride, int splitCount)
         {
             try
