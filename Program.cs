@@ -36,7 +36,6 @@ namespace FastaFileSplitter
         public const string PROGRAM_DATE = "August 5, 2021";
 
         private static string mInputFilePath;
-        private static int mSplitCount;
         private static string mOutputDirectoryName;              // Optional
         private static string mParameterFilePath;                // Optional
         private static string mOutputDirectoryAlternatePath;                // Optional
@@ -75,16 +74,17 @@ namespace FastaFileSplitter
 
             // Initialize the options
             mInputFilePath = string.Empty;
-            mSplitCount = clsFastaFileSplitter.DEFAULT_SPLIT_COUNT;
             mOutputDirectoryName = string.Empty;
             mParameterFilePath = string.Empty;
             mRecurseDirectories = false;
             mMaxLevelsToRecurse = 0;
             mLogMessagesToFile = false;
 
+            var options = new SplitterOptions();
+
             try
             {
-                var proceed = commandLineParser.ParseCommandLine() && SetOptionsUsingCommandLineParameters(commandLineParser);
+                var proceed = commandLineParser.ParseCommandLine() && SetOptionsUsingCommandLineParameters(commandLineParser, options);
 
                 if (!proceed || commandLineParser.NeedToShowHelp || commandLineParser.ParameterCount + commandLineParser.NonSwitchParameterCount == 0 || mInputFilePath.Length == 0)
                 {
@@ -93,7 +93,7 @@ namespace FastaFileSplitter
                 }
 
                 // Note: mSplitCount and mSplitCount will be overridden if mParameterFilePath points to a valid parameter file that has these settings defined
-                var fastaFileSplitter = new clsFastaFileSplitter(mSplitCount)
+                var fastaFileSplitter = new clsFastaFileSplitter(options)
                 {
                     LogMessagesToFile = mLogMessagesToFile
                 };
@@ -145,7 +145,7 @@ namespace FastaFileSplitter
             return ProcessFilesOrDirectoriesBase.GetAppVersion(PROGRAM_DATE);
         }
 
-        private static bool SetOptionsUsingCommandLineParameters(clsParseCommandLine commandLineParser)
+        private static bool SetOptionsUsingCommandLineParameters(clsParseCommandLine commandLineParser, SplitterOptions options)
         {
             // Returns True if no problems; otherwise, returns false
 
@@ -173,10 +173,21 @@ namespace FastaFileSplitter
 
                 if (commandLineParser.RetrieveValueForParameter("N", out var splitCount))
                 {
-                    if (!int.TryParse(splitCount, out mSplitCount))
+                    if (int.TryParse(splitCount, out var value))
                     {
-                        ConsoleMsgUtils.ShowError("Error parsing number from the /N parameter; use /N:25 to specify the file be split into " + clsFastaFileSplitter.DEFAULT_SPLIT_COUNT + " parts");
-                        mSplitCount = clsFastaFileSplitter.DEFAULT_SPLIT_COUNT;
+                        options.SplitCount = value;
+                    }
+                    else
+                    {
+                        ConsoleMsgUtils.ShowError(
+                            "Error parsing number from the /N parameter; " +
+                            "for example, use /N:{0} to specify the file be split into {0} parts",
+                            SplitterOptions.DEFAULT_SPLIT_COUNT);
+
+                        options.SplitCount = SplitterOptions.DEFAULT_SPLIT_COUNT;
+                    }
+                }
+
                     }
                 }
 

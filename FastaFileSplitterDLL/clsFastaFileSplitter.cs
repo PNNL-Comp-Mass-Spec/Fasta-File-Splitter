@@ -26,11 +26,6 @@ namespace FastaFileSplitterLibrary
         public const string XML_SECTION_OPTIONS = "FastaFileSplitterOptions";
 
         /// <summary>
-        /// Default number of files to create
-        /// </summary>
-        public const int DEFAULT_SPLIT_COUNT = 10;
-
-        /// <summary>
         /// Error codes specific to this class
         /// </summary>
         public enum FastaFileSplitterErrorCode
@@ -77,7 +72,6 @@ namespace FastaFileSplitterLibrary
             public long NumResidues;
         }
 
-        private int mSplitCount;
         private readonly Random mRandom;
 
         /// <summary>
@@ -101,19 +95,9 @@ namespace FastaFileSplitterLibrary
         public FastaFileSplitterErrorCode LocalErrorCode { get; private set; }
 
         /// <summary>
-        /// Number of parts to split the input FASTA file into
+        /// Processing options
         /// </summary>
-        public int FastaFileSplitCount
-        {
-            get => mSplitCount;
-
-            private set
-            {
-                if (value < 0)
-                    value = 0;
-                mSplitCount = value;
-            }
-        }
+        public SplitterOptions Options { get; }
 
         /// <summary>
         /// Information on each output file
@@ -123,15 +107,28 @@ namespace FastaFileSplitterLibrary
         /// <summary>
         /// Constructor
         /// </summary>
-        public clsFastaFileSplitter(int splitCount = 5)
+        /// <param name="splitCount"></param>
+        /// <param name="targetFastaFileSizeMB"></param>
+        /// <param name="useTargetFileSize"></param>
+        [Obsolete("Use the constructor with the SplitterOptions argument ")]
+        public clsFastaFileSplitter(int splitCount = 5, int targetFastaFileSizeMB = 100, bool useTargetFileSize = false)
+            : this (new SplitterOptions(splitCount, targetFastaFileSizeMB, useTargetFileSize))
+        {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="options"></param>
+        public clsFastaFileSplitter(SplitterOptions options)
         {
             mFileDate = "August 5, 2021";
 
             // Note: intentionally using a seed here
             mRandom = new Random(314159);
 
+            Options = options ?? new SplitterOptions();
             InitializeLocalVariables();
-            FastaFileSplitCount = splitCount;
         }
 
         /// <summary>
@@ -281,11 +278,9 @@ namespace FastaFileSplitterLibrary
         private void InitializeLocalVariables()
         {
             LocalErrorCode = FastaFileSplitterErrorCode.NoError;
-            FastaFileSplitCount = DEFAULT_SPLIT_COUNT;
             InputFileProteinsProcessed = 0;
             InputFileLinesRead = 0;
             InputFileLineSkipCount = 0;
-            SplitFastaFileInfo = new List<FastaFileInfoType>();
         }
 
         /// <summary>
@@ -323,7 +318,9 @@ namespace FastaFileSplitterLibrary
                         return false;
                     }
 
-                    FastaFileSplitCount = settingsFile.GetParam(XML_SECTION_OPTIONS, "SplitCount", FastaFileSplitCount);
+                    Options.SplitCount = settingsFile.GetParam(XML_SECTION_OPTIONS, "SplitCount", Options.SplitCount);
+                    Options.TargetFastaFileSizeMB = settingsFile.GetParam(XML_SECTION_OPTIONS, "TargetFastaFileSizeMB", Options.TargetFastaFileSizeMB);
+                    Options.UseTargetFileSize = settingsFile.GetParam(XML_SECTION_OPTIONS, "UseTargetFileSize", Options.UseTargetFileSize);
                 }
             }
             catch (Exception ex)
