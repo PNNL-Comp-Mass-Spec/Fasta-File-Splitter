@@ -149,7 +149,7 @@ namespace FastaFileSplitter
         {
             // Returns True if no problems; otherwise, returns false
 
-            var validParameters = new List<string> { "I", "N", "O", "P", "S", "A", "R", "L" };
+            var validParameters = new List<string> { "I", "N", "MB", "O", "P", "S", "A", "R", "L" };
 
             try
             {
@@ -188,6 +188,22 @@ namespace FastaFileSplitter
                     }
                 }
 
+                if (commandLineParser.RetrieveValueForParameter("MB", out var targetSizeMB))
+                {
+                    options.UseTargetFileSize = true;
+
+                    if (int.TryParse(targetSizeMB, out var value))
+                    {
+                        options.TargetFastaFileSizeMB = value;
+                    }
+                    else
+                    {
+                        ConsoleMsgUtils.ShowError(
+                            "Error parsing number from the /MB parameter; " +
+                            "for example, use /MB:{0} to specify the file be split into files that are each {0} MB in size",
+                            SplitterOptions.DEFAULT_TARGET_FILE_SIZE_MB);
+
+                        options.TargetFastaFileSizeMB = SplitterOptions.DEFAULT_TARGET_FILE_SIZE_MB;
                     }
                 }
 
@@ -235,7 +251,7 @@ namespace FastaFileSplitter
                 Console.WriteLine("Program syntax:");
                 Console.WriteLine(Path.GetFileName(ProcessFilesOrDirectoriesBase.GetAppPath()) +
                                   " /I:SourceFastaFile [/O:OutputDirectoryPath]");
-                Console.WriteLine(" [/N:SplitCount] [/P:ParameterFilePath] ");
+                Console.WriteLine(" [/N:SplitCount] [/MB:TargetSizeMB] [/P:ParameterFilePath] ");
                 Console.WriteLine(" [/S:[MaxLevel]] [/A:AlternateOutputDirectoryPath] [/R] [/L]");
                 Console.WriteLine();
                 Console.WriteLine(ConsoleMsgUtils.WrapParagraph(
@@ -244,6 +260,12 @@ namespace FastaFileSplitter
                     "If omitted, the output file will be created in the same directory as the input file."));
                 Console.WriteLine();
                 Console.WriteLine("Use /N to define the number of parts to split the input file into.");
+                Console.WriteLine("For example, /N:10 will split the input FASTA file into 10 parts");
+                Console.WriteLine();
+                Console.WriteLine("Alternatively, use /MB to specify the size of the split FASTA files, in MB (minimum {0} MB)", SplitterOptions.MINIMUM_TARGET_FILE_SIZE_MB);
+                Console.WriteLine("For example, /MB:100 will create separate FASTA files that are each ~100 MB in size");
+                Console.WriteLine();
+                Console.WriteLine("If both /N and /MB are specified, /N will be ignored");
                 Console.WriteLine();
                 Console.WriteLine(ConsoleMsgUtils.WrapParagraph(
                     "The parameter file path is optional. " +

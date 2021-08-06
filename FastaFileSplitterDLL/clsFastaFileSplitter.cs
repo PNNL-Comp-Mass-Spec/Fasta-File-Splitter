@@ -531,7 +531,88 @@ namespace FastaFileSplitterLibrary
         }
 
         /// <summary>
-        /// Main processing function -- Calls SplitFastaFile
+        /// Split inputFastaFilePath into multiple FASTA files, with each new FASTA file being roughly the same size
+        /// The output file will be created in outputDirectoryPath (or the same directory as inputFastaFilePath if outputDirectoryPath is empty)
+        /// </summary>
+        /// <param name="inputFastaFilePath"></param>
+        /// <param name="outputDirectoryPath"></param>
+        /// <param name="targetFileSizeMB">Size, in MB, that each of the split FASTA files should have once splitting is complete</param>
+        /// <param name="outputFileNameBaseOverride">When defined, use this name for the protein output filename rather than auto-defining the name</param>
+        /// <returns>True if success, false if an error</returns>
+        public bool SplitFastaFileBySize(string inputFastaFilePath, string outputDirectoryPath, int targetFileSizeMB, string outputFileNameBaseOverride = "")
+        {
+            try
+            {
+                var inputFile = new FileInfo(inputFastaFilePath);
+                if (!inputFile.Exists)
+                {
+                    ShowErrorMessage("Input file not found: " + inputFastaFilePath);
+
+                    if (ErrorCode == ProcessFilesErrorCodes.NoError)
+                    {
+                        SetBaseClassErrorCode(ProcessFilesErrorCodes.InvalidInputFilePath);
+                    }
+
+                    return false;
+                }
+
+                var fileSizeMB = inputFile.Length / 1024.0 / 1024;
+
+                // ReSharper disable once ConvertIfStatementToSwitchExpression
+                // ReSharper disable once ConvertIfStatementToSwitchStatement
+                if (targetFileSizeMB == 0)
+                {
+                    targetFileSizeMB = SplitterOptions.DEFAULT_TARGET_FILE_SIZE_MB;
+                }
+                else if (targetFileSizeMB < SplitterOptions.MINIMUM_TARGET_FILE_SIZE_MB)
+                {
+                    targetFileSizeMB = SplitterOptions.MINIMUM_TARGET_FILE_SIZE_MB;
+                }
+
+                int splitCount;
+
+                if (fileSizeMB <= targetFileSizeMB)
+                {
+                    ShowWarning(string.Format(
+                        "Input file is {0:F0} MB, which is less than the target size of {1} MB; only one FASTA file will be created for {2}",
+                        fileSizeMB, targetFileSizeMB, PathUtils.CompactPathString(inputFile.FullName)));
+
+                    Console.WriteLine();
+                    splitCount = 1;
+                }
+                else
+                {
+                    splitCount = (int)Math.Round(fileSizeMB / targetFileSizeMB);
+
+                    if (splitCount <= 1)
+                    {
+                        ShowWarning(string.Format(
+                            "Input file is {0:F0} MB, which is close to the target size of {1} MB; only one FASTA file will be created for {2}",
+                            fileSizeMB, targetFileSizeMB, PathUtils.CompactPathString(inputFile.FullName)));
+
+                        Console.WriteLine();
+                    }
+                    else
+                    {
+                        ShowMessage(string.Format(
+                            "Will create {0} FASTA files, each ~{1} MB in size", splitCount, targetFileSizeMB));
+
+                        Console.WriteLine();
+                    }
+                }
+
+                return SplitFastaFile(inputFile.FullName, outputDirectoryPath, splitCount);
+            }
+            catch (Exception ex)
+            {
+                HandleException("Error in SplitFastaFileBySize", ex);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Main processing function
+        /// Calls SplitFastaFile or SplitFastaFileBySize
         /// </summary>
         /// <param name="inputFilePath"></param>
         /// <param name="outputDirectoryPath"></param>
@@ -581,10 +662,12 @@ namespace FastaFileSplitterLibrary
                 try
                 {
                     // Obtain the full path to the input file
-                    var file = new FileInfo(inputFilePath);
-                    var inputFilePathFull = file.FullName;
+                    var inputFile = new FileInfo(inputFilePath);
+                    var inputFilePathFull = inputFile.FullName;
 
-                    var success = SplitFastaFile(inputFilePathFull, outputDirectoryPath, FastaFileSplitCount);
+                    var success = Options.UseTargetFileSize ?
+                        SplitFastaFileBySize(inputFilePathFull, outputDirectoryPath, Options.TargetFastaFileSizeMB) :
+                        SplitFastaFile(inputFilePathFull, outputDirectoryPath, Options.SplitCount);
 
                     if (success)
                     {
