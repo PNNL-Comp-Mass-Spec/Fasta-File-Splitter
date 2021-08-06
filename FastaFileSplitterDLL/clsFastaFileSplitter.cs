@@ -212,8 +212,9 @@ namespace FastaFileSplitterLibrary
         }
 
         /// <summary>
-        /// Examines the Residue counts in the output files
-        /// Will randomly choose one of the files whose residue count is less than the average residue count
+        /// Examines the residue counts in the output files
+        /// Returns the index of one of the files whose residue count is less than the average residue count
+        /// The file is chosen at random, though the random number generator is always instantiated with the same seed
         /// </summary>
         /// <param name="splitCount">Number of files the source .Fasta file is being split into</param>
         /// <param name="outputFiles">List of clsFastaOutputFile objects</param>
@@ -227,7 +228,7 @@ namespace FastaFileSplitterLibrary
 
             if (splitCount <= 1)
             {
-                // Nothing to do; just return 0
+                // Not actually splitting; just return 0
                 return 0;
             }
 
@@ -463,7 +464,8 @@ namespace FastaFileSplitterLibrary
                     return false;
                 }
 
-                UpdateProgress("Splitting FASTA file: " + Path.GetFileName(inputFastaFilePath), 0f);
+                var progressMessage = string.Format("Splitting {0} file into {1} parts", Path.GetFileName(inputFastaFilePath), splitCount);
+                UpdateProgress(progressMessage, 0f);
 
                 // Read each protein in the input file and process appropriately
                 InputFileProteinsProcessed = 0;
@@ -520,6 +522,8 @@ namespace FastaFileSplitterLibrary
 
                 // Create the stats file
                 WriteStatsFile(outputFilePathBase + "_SplitStats.txt", outputFiles);
+                Console.WriteLine();
+
                 UpdateProgress("Done: Processed " + InputFileProteinsProcessed.ToString("###,##0") + " proteins (" + InputFileLinesRead.ToString("###,###,##0") + " lines)", 100f);
                 return true;
             }
@@ -648,7 +652,7 @@ namespace FastaFileSplitterLibrary
                 }
 
                 Console.WriteLine();
-                Console.WriteLine("Parsing " + Path.GetFileName(inputFilePath));
+                ShowMessage("Parsing " + Path.GetFileName(inputFilePath));
 
                 // Note that CleanupFilePaths() will update mOutputDirectoryPath, which is used by LogMessage()
                 if (!CleanupFilePaths(ref inputFilePath, ref outputDirectoryPath))
