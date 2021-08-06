@@ -1,5 +1,9 @@
 FASTA File Splitter
 
+Version 1.1.7887; August 5, 2021
+	- Convert to C#
+	- Add option to specify the size (in MB) of the split FASTA files
+
 Version 1.0.6865; October 18, 2018
 
 Version 1.0.6778; July 23, 2018
