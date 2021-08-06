@@ -469,35 +469,35 @@ namespace FastaFileSplitterLibrary
                 InputFileProteinsProcessed = 0;
                 InputFileLineSkipCount = 0;
                 InputFileLinesRead = 0;
-                bool inputProteinFound;
 
-                do
+                while (true)
                 {
-                    inputProteinFound = fastaFileReader.ReadNextProteinEntry();
+                    var inputProteinFound = fastaFileReader.ReadNextProteinEntry();
                     InputFileLineSkipCount += fastaFileReader.LineSkipCount;
 
-                    if (inputProteinFound)
+                    if (!inputProteinFound)
                     {
-                        InputFileProteinsProcessed++;
-                        InputFileLinesRead = fastaFileReader.LinesRead;
-
-                        var outputFileIndex = GetTargetFileIndex(splitCount, outputFiles);
-
-                        if (outputFileIndex < 0 || outputFileIndex >= outputFiles.Count)
-                        {
-                            Console.WriteLine("Programming bug: index is outside the expected range.  Defaulting to use OutputFileIndex=0");
-                            outputFileIndex = 0;
-                        }
-
-                        // Append the current protein to the file at index outputFileIndex
-                        var description = fastaFileReader.ProteinDescription;
-                        var sequence = fastaFileReader.ProteinSequence;
-                        outputFiles[outputFileIndex].StoreProtein(fastaFileReader.ProteinName, description, sequence);
-
-                        UpdateProgress(fastaFileReader.PercentFileProcessed());
+                        break;
                     }
+
+                    InputFileProteinsProcessed++;
+                    InputFileLinesRead = fastaFileReader.LinesRead;
+
+                    var outputFileIndex = GetTargetFileIndex(splitCount, outputFiles);
+
+                    if (outputFileIndex < 0 || outputFileIndex >= outputFiles.Count)
+                    {
+                        OnWarningEvent("Programming bug: index is outside the expected range. Defaulting to use outputFileIndex=0");
+                        outputFileIndex = 0;
+                    }
+
+                    // Append the current protein to the file at index outputFileIndex
+                    var description = fastaFileReader.ProteinDescription;
+                    var sequence = fastaFileReader.ProteinSequence;
+                    outputFiles[outputFileIndex].StoreProtein(fastaFileReader.ProteinName, description, sequence);
+
+                    UpdateProgress(fastaFileReader.PercentFileProcessed());
                 }
-                while (inputProteinFound);
 
                 // Close the input file
                 fastaFileReader.CloseFile();
