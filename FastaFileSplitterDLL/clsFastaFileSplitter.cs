@@ -102,7 +102,7 @@ namespace FastaFileSplitterLibrary
         /// <summary>
         /// Information on each output file
         /// </summary>
-        public List<FastaFileInfoType> SplitFastaFileInfo { get; private set; }
+        public List<FastaFileInfoType> SplitFastaFileInfo { get; }
 
         /// <summary>
         /// Constructor
@@ -128,6 +128,8 @@ namespace FastaFileSplitterLibrary
             mRandom = new Random(314159);
 
             Options = options ?? new SplitterOptions();
+            SplitFastaFileInfo = new List<FastaFileInfoType>();
+
             InitializeLocalVariables();
         }
 
