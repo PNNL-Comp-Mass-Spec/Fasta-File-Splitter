@@ -1,0 +1,4 @@
+# Jekyll configuration
+name: Fasta-File-Splitter
+description: Console application that reads a protein FASTA file and splits it apart into a number of sections. Although the splitting is random, each section will have a nearly identical number of residues.
+url: https://pnnl-comp-mass-spec.github.io/Fasta-File-Splitter/
